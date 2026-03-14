@@ -29,6 +29,7 @@ local sprite_death			= Sprite.new("RevanantDeath", path.combine(SPRITE_PATH, "de
 
 local sprite_shoot1_1		= Sprite.new("RevenantShoot1_1", path.combine(SPRITE_PATH, "shoot1_1.png"), 6, 28, 62)
 local sprite_shoot1_2		= Sprite.new("RevenantShoot1_2", path.combine(SPRITE_PATH, "shoot1_2.png"), 6, 28, 62)
+local sprite_shoot1_3		= Sprite.new("RevenantShoot1_3", path.combine(SPRITE_PATH, "shoot1_3.png"), 6, 28, 62)
 local sprite_shoot2_half	= Sprite.new("RevenantShoot2Half", path.combine(SPRITE_PATH, "shoot2Half.png"), 5, 15, 26)
 local sprite_shoot2b		= Sprite.new("NemCommandoShoot2B", path.combine(SPRITE_PATH, "shoot2b.png"), 10, 36, 39)
 local sprite_shoot3			= Sprite.new("RevenantShoot3", path.combine(SPRITE_PATH, "shoot3.png"), 6, 14, 13)
