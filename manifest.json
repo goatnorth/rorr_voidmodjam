@@ -1,10 +1,8 @@
-﻿{
-	"name": "SampleMod",
-	"version_number": "1.0.0",
-	"website_url": "https://github.com/ReturnsAPI/ReturnsAPI/wiki",
-	"description": "The short description of your mod goes here.",
-	"dependencies": [
-		"ReturnOfModding-ReturnOfModding-1.1.16",
-		"ReturnsAPI-ReturnsAPI-0.1.49"
-	]
+{
+    "name": "Revenant Mod.zip",
+    "description": "",
+    "version_number": "0.0.0",
+    "dependencies": [],
+    "website_url": ""
+	"author": "GoatnorthandBoot"
 }

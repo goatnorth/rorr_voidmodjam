@@ -8,7 +8,7 @@ mods["ReturnsAPI-ReturnsAPI"].auto()
 require("./src/hooks")
 require("./src/callbacks")
 require("./src/imgui")
-
+require("./src/Revenant")
 --[[
 This registers a function that is called during ReturnsAPI's initialization loop
 Many content creation methods will not function before the loop runs
