@@ -1,5 +1,5 @@
-local SPRITE_PATH = path.combine(PATH, "sprites")
-local SOUND_PATH = path.combine(PATH, "sound")
+local SPRITE_PATH = path.combine(PATH, "sprites/")
+local SOUND_PATH = path.combine(PATH, "sound/")
 
 local sprite_select			= Sprite.new("RevenantSelect", path.combine(SPRITE_PATH, "select.png"), 34, 90, 0)
 local sprite_portrait		= Sprite.new("RevenantPortrait", path.combine(SPRITE_PATH, "portrait.png"), 3)
@@ -7,30 +7,30 @@ local sprite_portrait_small	= Sprite.new("RevenantPortraitSmall", path.combine(S
 local sprite_credits		= Sprite.new("CreditsSurvivorRevenant", path.combine(SPRITE_PATH, "credits.png"), 1, 7, 11)
 local sprite_palette 		= Sprite.new("RevenantPalette", path.combine(SPRITE_PATH, "palette.png"))
 
-local sprite_idle			= Sprite.new("RevenantIdle", path.combine(SPRITE_PATH, "idle.png"), 1, 15, 12)
-local sprite_idle2			= Sprite.new("RevenantIdle2", path.combine(SPRITE_PATH, "idle2.png"), 1, 15, 12)
-local sprite_idle_half		= Sprite.new("RevenantIdleHalf", path.combine(SPRITE_PATH, "idleHalf.png"), 1, 15, 12)
-local sprite_walk			= Sprite.new("RevenantWalk", path.combine(SPRITE_PATH, "walk.png"), 8, 17, 13) 
-local sprite_walk2			= Sprite.new("RevenantWalk2", path.combine(SPRITE_PATH, "walk2.png"), 8, 15, 18)
-local sprite_walk_half		= Sprite.new("RevenantWalkHalf", path.combine(SPRITE_PATH, "walkHalf.png"), 8, 17, 13)
-local sprite_walk_back		= Sprite.new("RevenantWalkBack", path.combine(SPRITE_PATH, "walkBack.png"), 8, 20, 25)
-local sprite_walk_back2		= Sprite.new("RevenantWalkBack2", path.combine(SPRITE_PATH, "walkBack2.png"), 8, 20, 25)
-local sprite_jump			= Sprite.new("RevenantJump", path.combine(SPRITE_PATH, "jump.png"), 1, 18, 17)
-local sprite_jump2			= Sprite.new("RevenantJump2", path.combine(SPRITE_PATH, "jump2.png"), 1, 18, 18)
-local sprite_jump_half		= Sprite.new("RevenantJumpHalf", path.combine(SPRITE_PATH, "jumpHalf.png"), 1, 18, 16)
-local sprite_jump_peak		= Sprite.new("RevenantJumpPeak", path.combine(SPRITE_PATH, "jumpPeak.png"), 1, 18, 17)
-local sprite_jump_peak2		= Sprite.new("RevenantJumpPeak2", path.combine(SPRITE_PATH, "jumpPeak2.png"), 1, 18, 18)
-local sprite_jump_peak_half	= Sprite.new("RevenantJumpPeakHalf", path.combine(SPRITE_PATH, "jumpPeakHalf.png"), 1, 18, 16)
-local sprite_fall			= Sprite.new("RevenantFall", path.combine(SPRITE_PATH, "fall.png"), 1, 18, 17)
-local sprite_fall2			= Sprite.new("RevenantFall2", path.combine(SPRITE_PATH, "fall2.png"), 1, 18, 18)
-local sprite_fall_half		= Sprite.new("RevenantFallHalf", path.combine(SPRITE_PATH, "fallHalf.png"), 1, 18, 16)
-local sprite_climb			= Sprite.new("RevenantClimb", path.combine(SPRITE_PATH, "climb.png"), 6, 20, 18)
-local sprite_death			= Sprite.new("RevanantDeath", path.combine(SPRITE_PATH, "death.png"), 13, 31, 9)
+local sprite_idle			= Sprite.new("RevenantIdle", path.combine(SPRITE_PATH, "idle.png"), 1, 19, 20)
+local sprite_idle2			= Sprite.new("RevenantIdle2", path.combine(SPRITE_PATH, "idle2.png"), 1, 19, 20)
+local sprite_idle_half		= Sprite.new("RevenantIdleHalf", path.combine(SPRITE_PATH, "idleHalf.png"), 1, 19, 20)
+local sprite_walk			= Sprite.new("RevenantWalk", path.combine(SPRITE_PATH, "walk.png"), 8, 21, 20) 
+local sprite_walk2			= Sprite.new("RevenantWalk2", path.combine(SPRITE_PATH, "walk2.png"), 8, 19, 24)
+local sprite_walk_half		= Sprite.new("RevenantWalkHalf", path.combine(SPRITE_PATH, "walkHalf.png"), 8, 21, 19)
+local sprite_walk_back		= Sprite.new("RevenantWalkBack", path.combine(SPRITE_PATH, "walkBack.png"), 8, 24, 31)
+local sprite_walk_back2		= Sprite.new("RevenantWalkBack2", path.combine(SPRITE_PATH, "walkBack2.png"), 8, 24, 31)
+local sprite_jump			= Sprite.new("RevenantJump", path.combine(SPRITE_PATH, "jump.png"), 1, 21, 27)
+local sprite_jump2			= Sprite.new("RevenantJump2", path.combine(SPRITE_PATH, "jump2.png"), 1, 21, 28)
+local sprite_jump_half		= Sprite.new("RevenantJumpHalf", path.combine(SPRITE_PATH, "jumpHalf.png"), 1, 21, 26)
+local sprite_jump_peak		= Sprite.new("RevenantJumpPeak", path.combine(SPRITE_PATH, "jumpPeak.png"), 1, 21, 27)
+local sprite_jump_peak2		= Sprite.new("RevenantJumpPeak2", path.combine(SPRITE_PATH, "jumpPeak2.png"), 1, 21, 28)
+local sprite_jump_peak_half	= Sprite.new("RevenantJumpPeakHalf", path.combine(SPRITE_PATH, "jumpPeakHalf.png"), 1, 21, 26)
+local sprite_fall			= Sprite.new("RevenantFall", path.combine(SPRITE_PATH, "fall.png"), 1, 21, 27)
+local sprite_fall2			= Sprite.new("RevenantFall2", path.combine(SPRITE_PATH, "fall2.png"), 1, 21, 28)
+local sprite_fall_half		= Sprite.new("RevenantFallHalf", path.combine(SPRITE_PATH, "fallHalf.png"), 1, 2, 26)
+local sprite_climb			= Sprite.new("RevenantClimb", path.combine(SPRITE_PATH, "climb.png"), 6, 24, 28)
+local sprite_death			= Sprite.new("RevanantDeath", path.combine(SPRITE_PATH, "death.png"), 13, 35, 9)
 
-local sprite_shoot1_1		= Sprite.new("RevenantShoot1_1", path.combine(SPRITE_PATH, "swordswing1.png"), 6, 28, 62)
-local sprite_shoot1_2		= Sprite.new("RevenantShoot1_2", path.combine(SPRITE_PATH, "swordswing2.png"), 6, 28, 62)
-local sprite_shoot1_3		= Sprite.new("RevenantShoot1_3", path.combine(SPRITE_PATH, "swordswing3.png"), 6, 28, 62)
-local sprite_shoot2_half	= Sprite.new("RevenantShoot2Half", path.combine(SPRITE_PATH, "shoot2Half.png"), 5, 15, 26)
+local sprite_shoot1_1		= Sprite.new("RevenantShoot1_1", path.combine(SPRITE_PATH, "swordswing1.png"), 6, 31, 42)
+local sprite_shoot1_2		= Sprite.new("RevenantShoot1_2", path.combine(SPRITE_PATH, "swordswing2.png"), 6, 31, 42)
+local sprite_shoot1_3		= Sprite.new("RevenantShoot1_3", path.combine(SPRITE_PATH, "swordswing3.png"), 10, 31, 42)
+local sprite_shoot2_half	= Sprite.new("RevenantShoot2Half", path.combine(SPRITE_PATH, "shoot2Half.png"), 5, 19, 26)
 local sprite_shoot2b		= Sprite.new("NemCommandoShoot2B", path.combine(SPRITE_PATH, "shoot2b.png"), 10, 36, 39)
 local sprite_shoot3			= Sprite.new("RevenantShoot3", path.combine(SPRITE_PATH, "shoot3.png"), 6, 14, 13)
 local sprite_shoot4_1		= Sprite.new("RevenantShoot4_1", path.combine(SPRITE_PATH, "shoot4_1.png"), 10, 23, 30)
@@ -69,7 +69,7 @@ sprite_walk_back:set_speed(0.8)
 sprite_walk_back2:set_speed(0.8)
 
 local sound_select			= Sound.new("UISurvivorsNemCommando", path.combine(SOUND_PATH, "select.ogg"))
-local sound_slash			= Sound.new("NemCommandoGash", path.combine(SOUND_PATH, "shoot2b.ogg"))
+local sound_slash			= Sound.new("NemCommandoGash", path.combine(SOUND_PATH, "damage4.ogg"))
 local sound_grenade_prime	= Sound.new("NemCommandoGrenadePrime", path.combine(SOUND_PATH, "grenade_prime.ogg"))
 local sound_grenade_throw	= Sound.new("NemCommandoGrenadeThrow", path.combine(SOUND_PATH, "grenade_throw.ogg"))
 local sound_grenade_bounce	= Sound.new("NemCommandoGrenadeBounce", path.combine(SOUND_PATH, "grenade_bounce.ogg"))
@@ -87,7 +87,7 @@ local particleRocketTrail = Particle.find("MissileTrailSuper")
 local particleRubble1 = Particle.find("Rubble1")
 local particleSpark = Particle.find("Spark")
 
-local nemmando = Survivor.new("nemesisCommando")
+local Revenant = Survivor.new("nemesisCommando")
 
 local ATTACK_TAG_APPLY_WOUND = 1
 local ATTACK_TAG_EXTEND_WOUND = 2
@@ -107,62 +107,63 @@ local ROCKET_SPEED_START = 0
 local ROCKET_SPEED_MAX = 24
 local ROCKET_ACCELERATION = 0.35
 
-nemmando:set_stats_base({
-	health = 200,
-	damage = 23,
-	regen = 0.018,
+Revenant:set_stats_base({
+	health = 210,
+	damage = 34,
+	regen = 0.02,
+	armor = 7,
 })
 
-nemmando:set_stats_level({
+Revenant:set_stats_level({
 	health = 43,
-	damage = 5,
+	damage = 7,
 	regen = 0.008,
 	armor = 4,
 })
 
-local nemmando_log = SurvivorLog.new_from_survivor(nemmando)
-nemmando_log.portrait_id = sprite_log
-nemmando_log.sprite_id = sprite_walk
-nemmando_log.sprite_icon_id = sprite_portrait
+local Revenant_log = SurvivorLog.new_from_survivor(Revenant)
+Revenant_log.portrait_id = sprite_log
+Revenant_log.sprite_id = sprite_walk
+Revenant_log.sprite_icon_id = sprite_portrait
 
-nemmando.primary_color = Color.from_rgb(250, 40, 40)
+Revenant.primary_color = Color.from_rgb(255, 141, 234)
 
-nemmando.sprite_portrait = sprite_portrait
-nemmando.sprite_portrait_small = sprite_portrait_small
-nemmando.sprite_loadout = sprite_select
+Revenant.sprite_portrait = sprite_portrait
+Revenant.sprite_portrait_small = sprite_portrait_small
+Revenant.sprite_loadout = sprite_select
 
-nemmando.sprite_idle = sprite_idle
-nemmando.sprite_title = sprite_walk
-nemmando.sprite_credits = sprite_credits
+Revenant.sprite_idle = sprite_idle
+Revenant.sprite_title = sprite_walk
+Revenant.sprite_credits = sprite_credits
 
-nemmando.sprite_palette = sprite_palette
-nemmando.sprite_portrait_palette = sprite_palette
-nemmando.sprite_loadout_palette = sprite_palette
+Revenant.sprite_palette = sprite_palette
+Revenant.sprite_portrait_palette = sprite_palette
+Revenant.sprite_loadout_palette = sprite_palette
 
-nemmando.select_sound_id = sound_select
-nemmando.cape_offset = Array.new({0, -8, 0, -5})
+Revenant.select_sound_id = sound_select
+Revenant.cape_offset = Array.new({0, -8, 0, -5})
 
 --[[
 --skins
-nemmando:add_skin("Mk. II", 1, Sprite.new("NemCommandoSelect2", path.combine(SPRITE_PATH, "select2.png"), 34, 28, 0),
+Revenant:add_skin("Mk. II", 1, Sprite.new("NemCommandoSelect2", path.combine(SPRITE_PATH, "select2.png"), 34, 28, 0),
 Sprite.new("NemCommandoPortrait2", path.combine(SPRITE_PATH, "portrait2.png"), 3),
 Sprite.new("NemCommandoPortraitSmall2", path.combine(SPRITE_PATH, "portraitTiny2.png")))
 
-nemmando:add_skin("Ice Blade", 2, Sprite.new("NemCommandoSelect3", path.combine(SPRITE_PATH, "select3.png"), 34, 28, 0),
+Revenant:add_skin("Ice Blade", 2, Sprite.new("NemCommandoSelect3", path.combine(SPRITE_PATH, "select3.png"), 34, 28, 0),
 Sprite.new("NemCommandoPortrait3", path.combine(SPRITE_PATH, "portrait3.png"), 3),
 Sprite.new("NemCommandoPortraitSmall3", path.combine(SPRITE_PATH, "portraitTiny3.png")))
 
-nemmando:add_skin("Nature's Gift", 3, Sprite.new("NemCommandoSelect4", path.combine(SPRITE_PATH, "select4.png"), 34, 28, 0),
+Revenant:add_skin("Nature's Gift", 3, Sprite.new("NemCommandoSelect4", path.combine(SPRITE_PATH, "select4.png"), 34, 28, 0),
 Sprite.new("NemCommandoPortrait4", path.combine(SPRITE_PATH, "portrait4.png"), 3),
 Sprite.new("NemCommandoPortraitSmall4", path.combine(SPRITE_PATH, "portraitTiny4.png")))
 
-nemmando:add_skin("Callback", 4, Sprite.new("NemCommandoSelect5", path.combine(SPRITE_PATH, "select5.png"), 34, 28, 0),
+Revenant:add_skin("Callback", 4, Sprite.new("NemCommandoSelect5", path.combine(SPRITE_PATH, "select5.png"), 34, 28, 0),
 Sprite.new("NemCommandoPortrait5", path.combine(SPRITE_PATH, "portrait5.png"), 3),
 Sprite.new("NemCommandoPortraitSmall5", path.combine(SPRITE_PATH, "portraitTiny5.png")))
 ]]--
 
 -- utility function for updating his basic sprites depending on if his last skill was the gun
-local function nemmando_update_sprites(actor, has_gun)
+local function Revenant_update_sprites(actor, has_gun)
 	if has_gun then
 		actor.sprite_idle = sprite_idle2
 		actor.sprite_walk = sprite_walk2
@@ -186,7 +187,7 @@ local function nemmando_update_sprites(actor, has_gun)
 	actor.sprite_walk_last = actor.sprite_walk -- dunno what this is but setting it was required
 end
 
-local function nemmando_update_strafe(actor)
+local function Revenant_update_strafe(actor)
 	-- adjust vertical offset so the upper body bobs up and down depending on the leg animation
 	if actor.sprite_index == actor.sprite_walk_half[2] then
 		local walk_offset = 0
@@ -200,7 +201,7 @@ local function nemmando_update_strafe(actor)
 	end
 end
 
-Callback.add(nemmando.on_init, function(actor)
+Callback.add(Revenant.on_init, function(actor)
 	actor.sprite_idle_half = Array.new({sprite_idle, sprite_idle_half, 0})
 	actor.sprite_walk_half = Array.new({sprite_walk, sprite_walk_half, 0, sprite_walk_back})
 	actor.sprite_jump_half = Array.new({sprite_jump, sprite_jump_half, 0})
@@ -227,52 +228,110 @@ Callback.add(nemmando.on_init, function(actor)
 end)
 
 -- default skills
-local primary = nemmando:get_skills(Skill.Slot.PRIMARY)[1]
-local secondary = nemmando:get_skills(Skill.Slot.SECONDARY)[1]
-local utility = nemmando:get_skills(Skill.Slot.UTILITY)[1]
-local special = nemmando:get_skills(Skill.Slot.SPECIAL)[1]
+local primary = Revenant:get_skills(Skill.Slot.PRIMARY)[1]
+local secondary = Revenant:get_skills(Skill.Slot.SECONDARY)[1]
+local utility = Revenant:get_skills(Skill.Slot.UTILITY)[1]
+local special = Revenant:get_skills(Skill.Slot.SPECIAL)[1]
 local specialS = Skill.new("nemesisCommandoVBoosted")
 
 -- alt secondary
 local secondary2 = Skill.new("nemesisCommandoX2")
-nemmando:add_skill(Skill.Slot.SECONDARY, secondary2)
+Revenant:add_skill(Skill.Slot.SECONDARY, secondary2)
 
 -- alt special 
 local special2 = Skill.new("nemesisCommandoV2")
 local special2S = Skill.new("nemesisCommandoV2Boosted")
-nemmando:add_skill(Skill.Slot.SPECIAL, special2)
+Revenant:add_skill(Skill.Slot.SPECIAL, special2)
 
--- Blade of Cessation
+-- Shattered Blade
 primary.sprite = sprite_skills
 primary.subimage = 0
-primary.cooldown = 10
-primary.damage = 1.2
+primary.damage = 2
+primary.cooldown = 0
+primary.is_primary = true
 primary.required_interrupt_priority = ActorState.InterruptPriority.ANY
 
-local statePrimary = ActorState.new("nemCommandoPrimary")
+local statePrimaryA = ActorState.new("nemMercenaryAttachmentStabA")
+local statePrimaryB = ActorState.new("nemMercenaryAttachmentStabB")
+local statePrimaryC = ActorState.new("nemMercenaryAttachmentStabC")
+local statePrimaryD = ActorState.new("nemMercenaryAttachmentStabD")
+local statePrimaryE = ActorState.new("nemMercenaryAttachmentStabE")
 
 Callback.add(primary.on_activate, function(actor, skill, slot)
-	actor:set_state(statePrimary)
-end)
-
-Callback.add(statePrimary.on_enter, function(actor, data)
-	actor.image_index = 0
-
-	nemmando_update_sprites(actor, false)
-
-	data.fired = 0
+	local data = Instance.get_data(actor)
 	
-	-- variable used to keep track of which attack anim to use
-	if not data.attack_side then
-		data.attack_side = 0
-	end
-
-	actor.sprite_index = sprite_shoot1_1
-	if data.attack_side == 1 then
-		actor.sprite_index = sprite_shoot1_2
+	if data.nemmerc_slide <= 0 then
+		if data.nemmerc_primary_combo_count == 0 then
+			actor:set_state(statePrimaryA)
+		elseif data.nemmerc_primary_combo_count == 1 then
+			actor:set_state(statePrimaryB)
+		elseif data.nemmerc_primary_combo_count == 2 then
+			actor:set_state(statePrimaryC)
+		end
+	else
+		actor:set_state(statePrimaryE)
 	end
 end)
 
+local function nemmerc_primary_code(actor, data, sprite_a, sound, combo)
+	local get_data = Instance.get_data(actor)
+	
+	local speed = 0.2
+	if combo == 2 then
+		speed = 0.17
+	end
+	
+	actor:skill_util_fix_hspeed()
+	actor:actor_animation_set(sprite_a, speed)
+	
+	local condition = (actor.image_index >= 1 and data.fired == 0)
+	if combo == 1 then
+		condition = ((actor.image_index >= 0 and data.fired == 0) or (actor.image_index >= 2 and data.fired == 1))
+	end
+	
+	if condition then
+		data.fired = data.fired + 1
+		get_data.nemmerc_primary_combo_timer = 45
+		
+		if combo < 2 then
+			get_data.nemmerc_primary_combo_count = combo + 1
+		else
+			get_data.nemmerc_primary_combo_count = 0
+		end
+		
+		if data.fired == 2 then
+			sound = gm.constants.wMercenaryShoot1_3
+		end
+		
+		actor:sound_play(sound, 1, 0.9 + math.random() * 0.2)
+		actor:skill_util_nudge_forward(2 * actor.image_xscale)
+		
+		if actor:is_authority() then
+			local damage = actor:skill_get_damage(primary)
+			local offset = 40
+			local range = 100
+			
+			if combo == 2 then
+				damage = damage * 1.5
+				offset = 60
+				range = 140
+			end
+			
+			if not GM.skill_util_update_heaven_cracker(actor, damage, actor.image_xscale) then
+				local buff_shadow_clone = Buff.find("shadowClone")
+				for i=0, actor:buff_count(buff_shadow_clone) do
+					local attack = actor:fire_explosion(actor.x + offset * actor.image_xscale, actor.y, range, 80, damage, nil, sprite_sparks).attack_info
+					attack.climb = i * 8 * 1.35
+					
+					if combo == 3 then
+						attack.knockback = attack.knockback + 3
+						attack.knockback_direction = actor.image_xscale
+					end
+				end
+			end
+		end
+	end
+end
 Callback.add(statePrimary.on_step, function(actor, data)
 	actor:skill_util_fix_hspeed()
 	actor:actor_animation_set(actor.sprite_index, 0.2)
@@ -281,7 +340,7 @@ Callback.add(statePrimary.on_step, function(actor, data)
 		data.fired = 1
 		data.attack_side = (data.attack_side + 1) % 2
 
-		actor:sound_play(gm.constants.wMercenaryShoot1_1, 1, 0.75 + math.random() * 0.05)
+		actor:sound_play(sound_slash, 1, 0.75 + math.random() * 0.05)
 
 		actor:skill_util_nudge_forward(2 * actor.image_xscale)
 
@@ -311,7 +370,7 @@ Callback.add(statePrimary.on_step, function(actor, data)
 					attack_info = actor:fire_explosion(actor.x + actor.image_xscale * 30, actor.y, 100, 65, damage, nil, gm.constants.sSparks9r).attack_info
 				end
 				attack_info.climb = i * 8 * 1.35
-				attack_info.__ssr_nemmando_wound = ATTACK_TAG_APPLY_WOUND
+				attack_info.__ssr_Revenant_wound = ATTACK_TAG_APPLY_WOUND
 			end
 		end
 	end
@@ -330,7 +389,7 @@ end)
 local wound = Buff.find("commandoWound")
 
 Callback.add(Callback.ON_ATTACK_HIT, function(hit_info)
-	local attack_tag = hit_info.attack_info.__ssr_nemmando_wound
+	local attack_tag = hit_info.attack_info.__ssr_Revenant_wound
 	if attack_tag then
 		local victim = hit_info.target
 
@@ -371,8 +430,8 @@ tracer:set_callback(function(x1, y1, x2, y2, color)
 	inst.direction = dir
 	inst.speed = 60
 	inst.length = 80
-	inst.blend_1 = Color.from_rgb(252, 118, 98)
-	inst.blend_2 = Color.from_rgb(252, 118, 98)
+	inst.blend_1 = Color.from_rgb(255, 141, 234)
+	inst.blend_2 = Color.from_rgb(255, 141, 234)
 	inst:alarm_set(0, math.max(1, dist / inst.speed))
 
 	-- particles
@@ -382,7 +441,7 @@ tracer:set_callback(function(x1, y1, x2, y2, color)
 	local py = y1
 	local i = 0
 	while i < dist do
-		particleTracer:create_colour(px, py, Color.from_rgb(252, 118, 98), 1)
+		particleTracer:create_colour(px, py, Color.from_rgb(255, 141, 234), 1)
 		px = px + gm.lengthdir_x(15, dir)
 		py = py + gm.lengthdir_y(15, dir)
 		i = i + 15
@@ -399,7 +458,7 @@ Callback.add(stateSecondary.on_enter, function(actor, data)
 	actor.image_index2 = 0
 	data.fired = 0
 
-	nemmando_update_sprites(actor, true)
+	Revenant_update_sprites(actor, true)
 
 	actor:skill_util_strafe_init()
 	--actor:skill_util_strafe_turn_init() -- this and skill_util_strafe_turn_update only works for skills in the Z/primary slot ....
@@ -411,7 +470,7 @@ Callback.add(stateSecondary.on_step, function(actor, data)
 	actor:skill_util_strafe_update(0.25 * actor.attack_speed, 0.5)
 	actor:skill_util_step_strafe_sprites()
 	--actor:skill_util_strafe_turn_update()
-	nemmando_update_strafe(actor)
+	Revenant_update_strafe(actor)
 
 	if data.fired == 0 then
 		data.fired = 1
@@ -443,7 +502,7 @@ Callback.add(stateSecondary.on_get_interrupt_priority, function(actor, data)
 end)
 
 -- Distant Gash
-local objSlash = Object.new("NemmandoSlash")
+local objSlash = Object.new("RevenantSlash")
 objSlash:set_sprite(sprite_gash)
 
 secondary2.sprite = sprite_skills
@@ -460,7 +519,7 @@ Callback.add(stateSecondary2.on_enter, function(actor, data)
 	actor.image_index = 0
 	data.fired = 0
 
-	nemmando_update_sprites(actor, false)
+	Revenant_update_sprites(actor, false)
 
 	actor:sound_play(gm.constants.wMercenary_Parry_Deflection, 0.8, 1.1)
 end)
@@ -553,7 +612,7 @@ Callback.add(objSlash.on_step, function(inst)
 		if inst:attack_collision_canhit(actor) and not data.hit_list[actor.id] then
 			if Net.host then
 				local attack = inst.parent:fire_direct(actor, 0.9, inst.direction, inst.x, inst.y, gm.constants.sBite3).attack_info
-				attack.__ssr_nemmando_wound = ATTACK_TAG_APPLY_WOUND
+				attack.__ssr_Revenant_wound = ATTACK_TAG_APPLY_WOUND
 			end
 
 			inst:sound_play(gm.constants.wMercenaryShoot1_3, 0.5, 0.9)
@@ -628,7 +687,7 @@ end)
 
 -- Flush Out
 
-local objGrenade = Object.new("NemmandoGrenade")
+local objGrenade = Object.new("RevenantGrenade")
 objGrenade:set_sprite(sprite_grenade)
 
 special.sprite = sprite_skills
@@ -669,7 +728,7 @@ Callback.add(stateSpecial.on_step, function(actor, data)
 	actor:skill_util_strafe_update(animation_speed, 0.75)
 	actor:skill_util_step_strafe_sprites()
 
-	nemmando_update_strafe(actor)
+	Revenant_update_strafe(actor)
 
 	if data.primed == 1 then
 		if data.fuse_timer % GRENADE_TICK_INTERVAL == 0 then
@@ -714,7 +773,7 @@ Callback.add(stateSpecial.on_step, function(actor, data)
 					-- magical bullshit to sync grenade releasing
 					-- so the thing is, there's no way to tell if another player is holding down their skill input.
 					-- so to actually sync this, i use the game's own message system to send a vanilla packet -- id 43: "set_activity_var2"
-					-- this packet sets the activity_var2 variable on the actor when received. so this way we can inform the host/other clients that a nemmando released his grenade.
+					-- this packet sets the activity_var2 variable on the actor when received. so this way we can inform the host/other clients that a Revenant released his grenade.
 					-- it also sets the actor's xscale i guess
 					if Net.host then
 						-- args: [not sure], packet id, object index, net id, value to write to activity_var2, actor xscale
@@ -923,7 +982,7 @@ Callback.add(objGrenade.on_destroy, function(inst)
 end)
 
 -- Devastator
-local objRocket = Object.new("NemmandoRocket")
+local objRocket = Object.new("RevenantRocket")
 objRocket:set_sprite(sprite_rocket)
 
 special2.sprite = sprite_skills
