@@ -43,7 +43,7 @@ local sprite_decoy			= Sprite.new("RevenantDecoy", path.combine(SPRITE_PATH, "de
 local sprite_drone_idle		= Sprite.new("DronePlayerRevenantIdle", path.combine(SPRITE_PATH, "drone_idle.png"), 5, 15, 13)
 local sprite_drone_shoot	= Sprite.new("DronePlayerRevenantShoot", path.combine(SPRITE_PATH, "drone_shoot.png"), 5, 33, 13)
 
-local sprite_skills			= Sprite.new("RevenantSkills", path.combine(SPRITE_PATH, "skills.png"), 8, 0, 0)
+local sprite_skills			= Sprite.new("RevenantSkills", path.combine(SPRITE_PATH, "skills.png"), 5, 0, 0)
 local sprite_gash			= Sprite.new("RevenantGash", path.combine(SPRITE_PATH, "gash.png"), 4, 25, 25)
 local sprite_dust			= Sprite.new("RevenantDust", path.combine(SPRITE_PATH, "dust.png"), 3, 21, 12)
 local sprite_grenade		= Sprite.new("RevenantGrenade", path.combine(SPRITE_PATH, "grenade.png"), 8, 9, 9)
@@ -220,6 +220,7 @@ local state_nuetral=ActorState.new("Hesittin")
 local state_primaryswing1=ActorState.new("SmashingBlade1")
 local state_primaryswing2=ActorState.new("SmashingBlade2")
 local state_primaryswing3=ActorState.new("SmashingBlade3")
+local state_secondaryshoot=ActorState.new("BrokenArrow")
 
 Callback.add(Revenant.on_init, function (actor) -- this sets up the combo value and the timer when rev initialises
 	local combo = 0
@@ -314,4 +315,36 @@ end)
 
 
 
+--SECONDARY SKILL BROKEN ARROW
 
+
+secondary.sprite = sprite_skills
+secondary.subimage = 1
+secondary.damage = 1.0
+secondary.cooldown = 5 * 60
+secondary.max_stock = 2
+secondary.hold_facing_direction = true
+secondary.is_primary = false 
+
+Callback.add(secondary.on_activate, function(actor, skill, slot) 
+	actor:set_state(state_secondaryshoot)
+end)
+  Callback.add(state_secondaryshoot.on_enter,function(actor,data) 
+	actor.image_index = 0
+    data.fired = 0
+	actor:sound_play(sound_slash, 1, 0.75 + math.random() * 0.05)
+	dir = actor:skill_util_facing_direction()
+		
+	end)
+Callback.add(state_secondaryshoot.on_step, function(actor,data)
+	actor:skill_util_fix_hspeed()
+	actor:actor_animation_set(sprite_shoot2_half, 0.2)
+	if data.fired == 0 and actor.image_index >= 2.0 then
+		local damage=actor:skill_get_damage(secondary)
+		if actor:is_authority() then
+		local attack = actor:fire_bullet(actor.x, actor.y, 1800, dir, damage, nil, gm.constants.sSparks23r, Tracer.PILOT_PRIMARY_STRONG)
+		end
+		data.fired=1
+	end
+	actor:skill_util_exit_state_on_anim_end()
+end)
