@@ -221,12 +221,12 @@ local state_primaryswing1=ActorState.new("SmashingBlade1")
 local state_primaryswing2=ActorState.new("SmashingBlade2")
 local state_primaryswing3=ActorState.new("SmashingBlade3")
 
-Callback.add(Revenant.on_init, function (actor)
+Callback.add(Revenant.on_init, function (actor) -- this sets up the combo value and the timer when rev initialises
 	local combo = 0
 	local primary_timer = 0
 end)
 
-Callback.add(Revenant.on_step, function(actor)
+Callback.add(Revenant.on_step, function(actor) -- this is how the combo resets! every frame, if primary_timer is more than 0 it gets -1, and if it goes to 0 (or less somehow) it sets combo to 0
 if primary_timer > 0 then
 		primary_timer = primary_timer - 1
 	else
@@ -241,7 +241,7 @@ primary.cooldown = 0
 primary.is_primary = true
 
 
-Callback.add(primary.on_activate, function(actor, skill, slot)
+Callback.add(primary.on_activate, function(actor, skill, slot) -- hopefully easy to understand: here the timer is set to start counting down, and it sends you into one of three states based on your current combo
 	primary_timer = 45
 	if combo == 0 then 
 	actor:set_state(state_primaryswing1)
@@ -251,7 +251,7 @@ Callback.add(primary.on_activate, function(actor, skill, slot)
 	actor:set_state(state_primaryswing3)
 	end
 end)
-  Callback.add(state_primaryswing1.on_enter,function(actor,data)
+  Callback.add(state_primaryswing1.on_enter,function(actor,data) -- all of the states are pretty much the same in terms of how they work: they use util_fix_hspeed to make you stand still, set your animation, fire an explosion and set your combo value
 	actor.image_index = 0
     data.fired = 0
 	actor:sound_play(sound_slash, 1, 0.75 + math.random() * 0.05)
@@ -265,7 +265,7 @@ Callback.add(state_primaryswing1.on_step, function(actor,data)
 		if actor:is_authority() then
 		local attack=actor:fire_explosion(actor.x+10*actor.image_xscale, actor.y, 100, 50, damage, nil, nil, true)
 		end
-		data.fired=1
+		data.fired=1 -- setting data.fired to 1 here makes it so that we only do the attack once whenever we enter a the state, otherwise this whole if statement would happen every frame we're in the state
 		combo=1
 	end
 	actor:skill_util_exit_state_on_anim_end()
