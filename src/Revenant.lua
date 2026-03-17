@@ -70,7 +70,7 @@ sprite_walk_back2:set_speed(0.8)
 
 local sound_select			= Sound.new("UISurvivorsNemCommando", path.combine(SOUND_PATH, "select.ogg"))
 local sound_slash			= Sound.new("NemCommandoGash", path.combine(SOUND_PATH, "damage4.ogg"))
-local sound_grenade_prime	= Sound.new("NemCommandoGrenadePrime", path.combine(SOUND_PATH, "grenade_prime.ogg"))
+local sound_stomp			= Sound.new("RevenantStomp", path.combine(SOUND_PATH, "damage2.ogg"))
 local sound_grenade_throw	= Sound.new("NemCommandoGrenadeThrow", path.combine(SOUND_PATH, "grenade_throw.ogg"))
 local sound_grenade_bounce	= Sound.new("NemCommandoGrenadeBounce", path.combine(SOUND_PATH, "grenade_bounce.ogg"))
 local sound_rocket_fire		= Sound.new("NemCommandoRocketFire", path.combine(SOUND_PATH, "rocket_fire.ogg"))
@@ -222,34 +222,43 @@ local state_primaryswing2=ActorState.new("SmashingBlade2")
 local state_primaryswing3=ActorState.new("SmashingBlade3")
 
 Callback.add(Revenant.on_init, function (actor)
-local combo=0
+	local combo = 0
+	local primary_timer = 0
 end)
 
-
-
+Callback.add(Revenant.on_step, function(actor)
+if primary_timer > 0 then
+		primary_timer = primary_timer - 1
+	else
+		combo = 0
+	end
+end)
 -- PRIMARY SKILL, SMASHING BLADE this shouldnt have been as hard as it was to make
 primary.sprite = sprite_skills
 primary.subimage = 0
-primary.damage = 1.7
+primary.damage = 1.2
 primary.cooldown = 0
 primary.is_primary = true
 
 
-
 Callback.add(primary.on_activate, function(actor, skill, slot)
+	primary_timer = 45
 	if combo == 0 then 
 	actor:set_state(state_primaryswing1)
 	elseif combo == 1 then 
-	actor:set_state(state_primaryswing2)
+	actor:set_state(state_primaryswing2) 
+	elseif combo == 2 then
+	actor:set_state(state_primaryswing3)
 	end
 end)
   Callback.add(state_primaryswing1.on_enter,function(actor,data)
-actor.image_index = 0
+	actor.image_index = 0
     data.fired = 0
 	actor:sound_play(sound_slash, 1, 0.75 + math.random() * 0.05)
 		
 	end)
 Callback.add(state_primaryswing1.on_step, function(actor,data)
+	actor:skill_util_fix_hspeed()
 	actor:actor_animation_set(sprite_shoot1_1, 0.2)
 	if data.fired == 0 and actor.image_index >= 2.0 then
 		local damage=actor:skill_get_damage(primary)
@@ -269,11 +278,33 @@ actor.image_index = 0
 		
 	end)
 Callback.add(state_primaryswing2.on_step, function(actor,data)
+	actor:skill_util_fix_hspeed()
 	actor:actor_animation_set(sprite_shoot1_2, 0.2)
 	if data.fired == 0 and actor.image_index >= 2.0 then
 		local damage=actor:skill_get_damage(primary)
 		if actor:is_authority() then
 		local attack=actor:fire_explosion(actor.x+10*actor.image_xscale, actor.y, 100, 50, damage, nil, nil, true)
+		end
+		data.fired=1
+		combo=2
+	end
+	actor:skill_util_exit_state_on_anim_end()
+end)
+
+  Callback.add(state_primaryswing3.on_enter,function(actor,data)
+actor.image_index = 0
+    data.fired = 0
+	
+		
+	end)
+Callback.add(state_primaryswing3.on_step, function(actor,data)
+	actor:skill_util_fix_hspeed()
+	actor:actor_animation_set(sprite_shoot1_3, 0.2)
+	if data.fired == 0 and actor.image_index >= 4.0 then
+		actor:sound_play(sound_stomp, 1, 0.75 + math.random() * 0.05)
+		local damage=actor:skill_get_damage(primary)
+		if actor:is_authority() then
+		local attack=actor:fire_explosion(actor.x+10*actor.image_xscale, actor.y, 100, 50, damage*1.2, nil, nil, true)
 		end
 		data.fired=1
 		combo=0
