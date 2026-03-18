@@ -30,7 +30,7 @@ local sprite_death			= Sprite.new("RevenantDeath", path.combine(SPRITE_PATH, "de
 local sprite_shoot1_1		= Sprite.new("RevenantShoot1_1", path.combine(SPRITE_PATH, "swordswing1.png"), 6, 21, 42)
 local sprite_shoot1_2		= Sprite.new("RevenantShoot1_2", path.combine(SPRITE_PATH, "swordswing2.png"), 6, 21, 42)
 local sprite_shoot1_3		= Sprite.new("RevenantShoot1_3", path.combine(SPRITE_PATH, "swordswing3.png"), 10, 21, 42)
-local sprite_shoot2_half	= Sprite.new("RevenantShoot2Half", path.combine(SPRITE_PATH, "shoot2Half.png"), 5, 9, 26)
+local sprite_shoot2	= Sprite.new("RevenantShoot2", path.combine(SPRITE_PATH, "shoot2.png"), 7, 11, 20)
 local sprite_shoot2b		= Sprite.new("NemCommandoShoot2B", path.combine(SPRITE_PATH, "shoot2b.png"), 10, 26, 39)
 local sprite_shoot3			= Sprite.new("RevenantShoot3", path.combine(SPRITE_PATH, "shoot3.png"), 6, 4, 13)
 local sprite_shoot4_1		= Sprite.new("RevenantShoot4_1", path.combine(SPRITE_PATH, "shoot4_1.png"), 10, 13, 30)
@@ -71,7 +71,7 @@ sprite_walk_back2:set_speed(0.8)
 local sound_select			= Sound.new("UISurvivorsNemCommando", path.combine(SOUND_PATH, "select.ogg"))
 local sound_slash			= Sound.new("NemCommandoGash", path.combine(SOUND_PATH, "damage4.ogg"))
 local sound_stomp			= Sound.new("RevenantStomp", path.combine(SOUND_PATH, "damage2.ogg"))
-local sound_grenade_throw	= Sound.new("NemCommandoGrenadeThrow", path.combine(SOUND_PATH, "grenade_throw.ogg"))
+local sound_bow	= Sound.new("RevenantBowFire", path.combine(SOUND_PATH, "ice9.ogg"))
 local sound_grenade_bounce	= Sound.new("NemCommandoGrenadeBounce", path.combine(SOUND_PATH, "grenade_bounce.ogg"))
 local sound_rocket_fire		= Sound.new("NemCommandoRocketFire", path.combine(SOUND_PATH, "rocket_fire.ogg"))
 
@@ -228,7 +228,7 @@ Callback.add(Revenant.on_init, function (actor) -- this sets up the combo value 
 end)
 
 Callback.add(Revenant.on_step, function(actor) -- this is how the combo resets! every frame, if primary_timer is more than 0 it gets -1, and if it goes to 0 (or less somehow) it sets combo to 0
-if primary_timer > 0 then
+	if primary_timer > 0 then
 		primary_timer = primary_timer - 1
 	else
 		combo = 0
@@ -332,17 +332,18 @@ end)
   Callback.add(state_secondaryshoot.on_enter,function(actor,data) 
 	actor.image_index = 0
     data.fired = 0
-	actor:sound_play(sound_slash, 1, 0.75 + math.random() * 0.05)
 	dir = actor:skill_util_facing_direction()
 		
 	end)
 Callback.add(state_secondaryshoot.on_step, function(actor,data)
 	actor:skill_util_fix_hspeed()
-	actor:actor_animation_set(sprite_shoot2_half, 0.2)
-	if data.fired == 0 and actor.image_index >= 2.0 then
+	actor:actor_animation_set(sprite_shoot2, 0.2)
+	actor:sound_play(sound_bow, 1, 0.75 + math.random() * 0.05)
+	if data.fired == 0 and actor.image_index >= 5.0 then
 		local damage=actor:skill_get_damage(secondary)
 		if actor:is_authority() then
 		local attack = actor:fire_bullet(actor.x, actor.y, 1800, dir, damage, nil, gm.constants.sSparks23r, Tracer.PILOT_PRIMARY_STRONG)
+		attack.attack_info:set_knockback(-1*actor.image_xscale, 30, 8, 1)
 		end
 		data.fired=1
 	end
