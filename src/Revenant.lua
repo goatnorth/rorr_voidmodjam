@@ -212,6 +212,11 @@ local utility = Revenant:get_skills(Skill.Slot.UTILITY)[1]
 local special = Revenant:get_skills(Skill.Slot.SPECIAL)[1]
 local specialS = Skill.new("RevenantVBoosted")
 
+Callback.add(Revenant.on_init, function (actor) -- this sets up the combo value and the timer when rev initialises
+	local combo = 0
+	local primary_timer = 0
+end)
+
 -- default skills
 
 --Making skills makes me wanna skill myself.
@@ -222,10 +227,7 @@ local state_primaryswing2=ActorState.new("SmashingBlade2")
 local state_primaryswing3=ActorState.new("SmashingBlade3")
 local state_secondaryshoot=ActorState.new("BrokenArrow")
 
-Callback.add(Revenant.on_init, function (actor) -- this sets up the combo value and the timer when rev initialises
-	local combo = 0
-	local primary_timer = 0
-end)
+
 
 Callback.add(Revenant.on_step, function(actor) -- this is how the combo resets! every frame, if primary_timer is more than 0 it gets -1, and if it goes to 0 (or less somehow) it sets combo to 0
 	if primary_timer > 0 then
