@@ -61,6 +61,7 @@ local sound_portal 			= Sound.new("NemCommandoPortal", path.combine(SOUND_PATH, 
 
 local sprite_log			= Sprite.new("NemCommandoLog", path.combine(SPRITE_PATH, "log.png"))
 
+local sprite_purple         = Sprite.new("Purple", path.combine(SPRITE_PATH, "WHATIFITWASPURPLE.png"))
 -- walk sprites have a sprite speed of 0.8, the slower animation looks better
 sprite_walk:set_speed(0.8)
 sprite_walk2:set_speed(0.8)
@@ -71,7 +72,7 @@ sprite_walk_back2:set_speed(0.8)
 local sound_select			= Sound.new("UISurvivorsNemCommando", path.combine(SOUND_PATH, "select.ogg"))
 local sound_slash			= Sound.new("NemCommandoGash", path.combine(SOUND_PATH, "damage4.ogg"))
 local sound_stomp			= Sound.new("RevenantStomp", path.combine(SOUND_PATH, "damage2.ogg"))
-local sound_bow	= Sound.new("RevenantBowFire", path.combine(SOUND_PATH, "ice9.ogg"))
+local sound_bow				= Sound.new("RevenantBowFire", path.combine(SOUND_PATH, "ice9.ogg"))
 local sound_grenade_bounce	= Sound.new("NemCommandoGrenadeBounce", path.combine(SOUND_PATH, "grenade_bounce.ogg"))
 local sound_rocket_fire		= Sound.new("NemCommandoRocketFire", path.combine(SOUND_PATH, "rocket_fire.ogg"))
 
@@ -370,6 +371,7 @@ utility.override_strafe_direction = true
 utility.ignore_aim_direction = true
 utility.is_utility = true
 
+
 Callback.add(utility.on_activate, function(actor, skill, slot)
 	actor:set_state(state_utilitystart)
 end)
@@ -382,10 +384,10 @@ end)
 Callback.add(state_utilitystart.on_step, function(actor, data)
 	if data.fired == 0 then 
 		actor.pGravity1 = 0
-		actor.pVspeed = -2.5 
+		actor.pVspeed = -5 
 		data.fired = 1
 	end
-	actor.pVspeed = actor.pVspeed + 0.1
+	actor.pVspeed = actor.pVspeed + 0.2
 	if actor.pVspeed >= 0 then
 		actor:set_state(state_utility)
 	end
@@ -403,7 +405,8 @@ Callback.add(state_utility.on_step, function(actor, data)
 	if utility_timer <= 0 then
 		local damage=actor:skill_get_damage(utility)
 		if actor:is_authority() then
-			local attack=actor:fire_explosion(actor.x, actor.y, 100, 100, damage, nil, nil, true)
+			actor:sound_play(sound_stomp, 1, 0.75 + math.random() * 0.05)
+			local attack=actor:fire_explosion(actor.x, actor.y, 100, 100, damage, sprite_purple, nil, true)
 			attack.attack_info:set_knockback(1*actor.image_xscale, 30, 1, 1)
 			utility_timer = 30
 		end
