@@ -13,7 +13,7 @@ local sprite_idle_half		= Sprite.new("RevenantIdleHalf", path.combine(SPRITE_PAT
 local sprite_walk			= Sprite.new("RevenantWalk", path.combine(SPRITE_PATH, "walk.png"), 8, 11, 20) 
 local sprite_walk2			= Sprite.new("RevenantWalk2", path.combine(SPRITE_PATH, "walk2.png"), 8, 9, 24)
 local sprite_walk_half		= Sprite.new("RevenantWalkHalf", path.combine(SPRITE_PATH, "walkHalf.png"), 8, 11, 19)
-local sprite_walk_back		= Sprite.new("RevenantWalkBack", path.combine(SPRITE_PATH, "walkBack.png"), 8, 14, 31)
+local sprite_walk_back		= Sprite.new("RevenantWalkBack", path.combine(SPRITE_PATH, "walkBack.png"), 8, 11, 20)
 local sprite_walk_back2		= Sprite.new("RevenantWalkBack2", path.combine(SPRITE_PATH, "walkBack2.png"), 8, 14, 31)
 local sprite_jump			= Sprite.new("RevenantJump", path.combine(SPRITE_PATH, "jump.png"), 1, 11, 27)
 local sprite_jump2			= Sprite.new("RevenantJump2", path.combine(SPRITE_PATH, "jump2.png"), 1, 11, 28)
@@ -129,6 +129,11 @@ Revenant.sprite_loadout_palette = sprite_palette
 Revenant.select_sound_id = sound_select
 Revenant.cape_offset = Array.new({0, -8, 0, -5})
 
+local combo = 0
+local primary_timer = 0
+local utility_timer = 0
+local utility_duration = 0
+
 --[[
 --skins
 Revenant:add_skin("Mk. II", 1, Sprite.new("NemCommandoSelect2", path.combine(SPRITE_PATH, "select2.png"), 34, 28, 0),
@@ -226,6 +231,8 @@ local state_primaryswing1=ActorState.new("SmashingBlade1")
 local state_primaryswing2=ActorState.new("SmashingBlade2")
 local state_primaryswing3=ActorState.new("SmashingBlade3")
 local state_secondaryshoot=ActorState.new("BrokenArrow")
+local state_utilitystart = ActorState.new("RevFloatLaunch")
+local state_utility = ActorState.new("RevFloat")
 
 
 
@@ -340,8 +347,8 @@ end)
 Callback.add(state_secondaryshoot.on_step, function(actor,data)
 	actor:skill_util_fix_hspeed()
 	actor:actor_animation_set(sprite_shoot2, 0.2)
-	actor:sound_play(sound_bow, 1, 0.75 + math.random() * 0.05)
 	if data.fired == 0 and actor.image_index >= 5.0 then
+		actor:sound_play(sound_bow, 1, 0.75 + math.random() * 0.05)
 		local damage=actor:skill_get_damage(secondary)
 		if actor:is_authority() then
 		local attack = actor:fire_bullet(actor.x, actor.y, 1800, dir, damage, nil, gm.constants.sSparks23r, Tracer.PILOT_PRIMARY_STRONG)
@@ -351,3 +358,65 @@ Callback.add(state_secondaryshoot.on_step, function(actor,data)
 	end
 	actor:skill_util_exit_state_on_anim_end()
 end)
+
+-- UTILITY
+
+utility.sprite = sprite_skills
+utility.subimage = 2
+utility.damage = 0.8
+utility.cooldown = 6 * 60
+utility.max_stock = 1
+utility.override_strafe_direction = true
+utility.ignore_aim_direction = true
+utility.is_utility = true
+
+Callback.add(utility.on_activate, function(actor, skill, slot)
+	actor:set_state(state_utilitystart)
+end)
+
+Callback.add(state_utilitystart.on_enter, function(actor, data)
+	actor.image_index = 0
+	data.fired = 0
+end)
+
+Callback.add(state_utilitystart.on_step, function(actor, data)
+	if data.fired == 0 then 
+		actor.pGravity1 = 0
+		actor.pVspeed = -2.5 
+		data.fired = 1
+	end
+	actor.pVspeed = actor.pVspeed + 0.1
+	if actor.pVspeed >= 0 then
+		actor:set_state(state_utility)
+	end
+end)
+
+Callback.add(state_utility.on_enter, function(actor, data)
+	actor:actor_animation_set(sprite_shoot1_3, 0.1)
+	utility_duration = 180
+	utility_timer = 30
+end)
+
+Callback.add(state_utility.on_step, function(actor, data)
+	utility_duration = utility_duration - 1
+	utility_timer = utility_timer - 1 * actor.attack_speed
+	if utility_timer <= 0 then
+		local damage=actor:skill_get_damage(utility)
+		if actor:is_authority() then
+			local attack=actor:fire_explosion(actor.x, actor.y, 100, 100, damage, nil, nil, true)
+			attack.attack_info:set_knockback(1*actor.image_xscale, 30, 1, 1)
+			utility_timer = 30
+		end
+	end
+	if utility_duration <= 0 then
+		
+		actor.pGravity1 = actor.pGravity1_base
+		actor.pVspeed = 0
+		actor:actor_animation_set (sprite_jump, 0.3)
+		actor:skill_util_exit_state_on_anim_end()
+	end	
+end)
+
+-- Callback.add(state_utility.on_exit, function(actor, data)
+	-- actor.pGravity1 = actor.pGravity1_base
+-- end)
