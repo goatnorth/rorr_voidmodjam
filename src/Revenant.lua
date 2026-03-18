@@ -44,12 +44,7 @@ local sprite_drone_idle		= Sprite.new("DronePlayerRevenantIdle", path.combine(SP
 local sprite_drone_shoot	= Sprite.new("DronePlayerRevenantShoot", path.combine(SPRITE_PATH, "drone_shoot.png"), 5, 33, 13)
 
 local sprite_skills			= Sprite.new("RevenantSkills", path.combine(SPRITE_PATH, "skills.png"), 5, 0, 0)
-local sprite_gash			= Sprite.new("RevenantGash", path.combine(SPRITE_PATH, "gash.png"), 4, 25, 25)
 local sprite_dust			= Sprite.new("RevenantDust", path.combine(SPRITE_PATH, "dust.png"), 3, 21, 12)
-local sprite_grenade		= Sprite.new("RevenantGrenade", path.combine(SPRITE_PATH, "grenade.png"), 8, 9, 9)
-
-gm.sprite_set_bbox_mode(sprite_grenade.value, 2) -- manual
-gm.sprite_set_bbox(sprite_grenade.value, 1, 1, 16, 16) -- reduce hitbox by 1px on each side
 
 local sprite_explosion		= Sprite.new("NemCommandoExplosion", path.combine(SPRITE_PATH, "grenade_explosion.png"), 5, 117, 102)
 local sprite_rocket			= Sprite.new("NemCommandoRocket", path.combine(SPRITE_PATH, "rocket.png"), 3, 33, 10)
@@ -61,7 +56,6 @@ local sound_portal 			= Sound.new("NemCommandoPortal", path.combine(SOUND_PATH, 
 
 local sprite_log			= Sprite.new("NemCommandoLog", path.combine(SPRITE_PATH, "log.png"))
 
-local sprite_purple         = Sprite.new("Purple", path.combine(SPRITE_PATH, "WHATIFITWASPURPLE.png"))
 -- walk sprites have a sprite speed of 0.8, the slower animation looks better
 sprite_walk:set_speed(0.8)
 sprite_walk2:set_speed(0.8)
@@ -72,7 +66,7 @@ sprite_walk_back2:set_speed(0.8)
 local sound_select			= Sound.new("UISurvivorsNemCommando", path.combine(SOUND_PATH, "select.ogg"))
 local sound_slash			= Sound.new("NemCommandoGash", path.combine(SOUND_PATH, "damage4.ogg"))
 local sound_stomp			= Sound.new("RevenantStomp", path.combine(SOUND_PATH, "damage2.ogg"))
-local sound_bow				= Sound.new("RevenantBowFire", path.combine(SOUND_PATH, "ice9.ogg"))
+local sound_bow	= Sound.new("RevenantBowFire", path.combine(SOUND_PATH, "ice9.ogg"))
 local sound_grenade_bounce	= Sound.new("NemCommandoGrenadeBounce", path.combine(SOUND_PATH, "grenade_bounce.ogg"))
 local sound_rocket_fire		= Sound.new("NemCommandoRocketFire", path.combine(SOUND_PATH, "rocket_fire.ogg"))
 
@@ -115,9 +109,9 @@ Revenant_log.sprite_icon_id = sprite_portrait
 
 Revenant.primary_color = Color.from_rgb(255, 141, 234)
 
-Revenant.sprite_portrait = sprite_portrait
-Revenant.sprite_portrait_small = sprite_portrait_small
-Revenant.sprite_loadout = sprite_select
+-- Revenant.sprite_portrait = sprite_portrait
+--Revenant.sprite_portrait_small = sprite_portrait_small
+--Revenant.sprite_loadout = sprite_select
 
 Revenant.sprite_idle = sprite_idle
 Revenant.sprite_title = sprite_walk
@@ -332,8 +326,8 @@ end)
 secondary.sprite = sprite_skills
 secondary.subimage = 1
 secondary.damage = 1.0
-secondary.cooldown = 5 * 60
-secondary.max_stock = 2
+secondary.cooldown = 3 * 60
+secondary.max_stock = 3
 secondary.hold_facing_direction = true
 secondary.is_primary = false 
 
@@ -361,7 +355,7 @@ Callback.add(state_secondaryshoot.on_step, function(actor,data)
 	actor:skill_util_exit_state_on_anim_end()
 end)
 
--- UTILITY
+-- UTILITY LASHING WHIP
 
 utility.sprite = sprite_skills
 utility.subimage = 2
@@ -373,11 +367,9 @@ utility.ignore_aim_direction = true
 utility.is_utility = true
 utility.required_interrupt_priority = ActorState.InterruptPriority.ANY
 
-
 Callback.add(utility.on_activate, function(actor, skill, slot)
 	actor:set_state(state_utilitystart)
 end)
-
 
 Callback.add(state_utilitystart.on_enter, function(actor, data)
 	actor.image_index = 0
@@ -387,17 +379,16 @@ end)
 Callback.add(state_utilitystart.on_step, function(actor, data)
 	if data.fired == 0 then 
 		actor.pGravity1 = 0
-		actor.pVspeed = -5 
+		actor.pVspeed = -2.5 
 		data.fired = 1
 	end
-	actor.pVspeed = actor.pVspeed + 0.2
+	actor.pVspeed = actor.pVspeed + 0.1
 	if actor.pVspeed >= 0 then
 		actor:set_state(state_utility)
 	end
 end)
 
 Callback.add(state_utility.on_enter, function(actor, data)
-	actor:skill_util_strafe_and_slide_init()
 	actor:actor_animation_set(sprite_shoot1_3, 0.1)
 	utility_duration = 180
 	utility_timer = 30
@@ -409,14 +400,12 @@ end)
 
 
 Callback.add(state_utility.on_step, function(actor, data)
-	actor:skill_util_strafe_and_slide()
 	utility_duration = utility_duration - 1
 	utility_timer = utility_timer - 1 * actor.attack_speed
 	if utility_timer <= 0 then
 		local damage=actor:skill_get_damage(utility)
 		if actor:is_authority() then
-			actor:sound_play(sound_stomp, 1, 0.75 + math.random() * 0.05)
-			local attack=actor:fire_explosion(actor.x, actor.y, 100, 100, damage, sprite_purple, nil, true)
+			local attack=actor:fire_explosion(actor.x, actor.y, 100, 100, damage, nil, nil, true)
 			attack.attack_info:set_knockback(1*actor.image_xscale, 30, 1, 1)
 			utility_timer = 30
 		end
@@ -433,3 +422,26 @@ end)
 -- Callback.add(state_utility.on_exit, function(actor, data)
 	-- actor.pGravity1 = actor.pGravity1_base
 -- end)
+
+
+
+
+
+
+-- SPECIAL CORRUPTED CANNON
+local objRocket = Object.new("CorruptedCannon")
+objRocket:set_sprite(sprite_rocket)
+
+special.sprite = sprite_skills
+special.subimage = 3
+special.upgrade_skill = specialS
+special.cooldown = 6 * 60
+special.disable_aim_stall = true
+specialS.sprite = sprite_skills
+specialS.subimage = 4
+specialS.cooldown = 6 * 60
+specialS.max_stock = 2
+specialS.disable_aim_stall = true
+
+
+

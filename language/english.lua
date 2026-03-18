@@ -3,14 +3,13 @@ return {
 		Revenant = {
 			name = "Revenant",
 			nameUpper = "REVENANT",
-			description = "The <y>Revenant</c> is a walking tank who has finally found freedom, smashing anyone who gets in his way. Being a melee character he struggles with rang at times, which is where his secondary comes in, it has a long range and pull enemies in. If you're surrounded use your utilitly to shred anyone close, and if there is somehow some fool still there, remove them from existence with the Corrupted Cannon"
+			description = "The <y>Revenant</c> is a walking tank who has finally found freedom, smashing anyone who gets in his way. Being a melee character he struggles with range at times, which is where his secondary comes in, it has a long range and it pulls enemies in. If you're surrounded use your utilitly to shred anyone close, and if there is somehow some fool still there, remove them from existence with the Corrupted Cannon",
 			endQuote = "..and so he left, to be exiled once more.",
-			story = "<ul>Passenger Details:</c>\n<y>[Military Class]</c>\n\n<ul>Luggage and Equipment:</c>\nOfficer boarded with EXN Acting Officer carbonweave uniform, civilian-grade plated oversuit and an issued service pistol. At military checkpoint, passenger's armament was noted to have an additional under-barrel \nmodification- and was cleared after an agreement was made to store it in a secure container. The passenger also cleared one ION 204X series battery customized with propulsion orifices. As a safety measure, passenger's \ntechnological goods were temporarily fitted with electrical auto-nullifiers and returned to them.\n\n<b>[SECURITY RECALL]</c>\n<ul>[Note E1a]</c> Several reports of Passenger making entire security checkpoint crew uneasy. Light surveillance will be required until further notice.\n<ul>[Note E1b]</c> Passenger would often reply in sounds rather than speech before opting to use Universal Sign Language.\n<ul>[Event E1]</c> Contracted commando performs security check in Passenger's quarters.\n<ul>[Event E1a]</c> Contracted commando requests 24 hour private surveillance in hall leading to Passenger's quarters.\n<ul>[Event E2]</c> Passenger asked to move tables during mealtime after another Passenger sent a formal complaint to onboard security.",
-			id = "Travel ID: 4383354378334FF3D34D",
-			departure = "<y>Departure:</c>\nOld Alcatraz,\nRustborough,\nMars",
-			arrival = "<y>Destination:</c>\nStillwater Bay,\nNewdredge,\nEuropa"
+			story = "An ancient warrior of the High Court, believing he set out on a pilgrimage, when in reality was exiled for his ideals. Never knowing this, he continued his journey and eventually encountered some sort of portal, being interested he entered. He regrets that decision to this very day. For that portal sent him to the void never to return, as most would think. He battled for his life for over 500 years being corrupted by the Void's essence and was nigh unrecongizable, in fact, he techincally wasn't a living being anymore. Just a spirit in a corrupted suit of armor. However, eventually he did break free and he felt euphoria for the first time in 500 years. Only to return home and be declared a heretic and a monster and exiled once more. He settled down at a lawless world and made a farm. They still say he still works there to this day.",
+			id = "Travel ID: 7304D719H810543 OOD",
+		
 		},
-			}
+			},
 	skill = {
 		RevenantZ = {
 			name = "Smashing Blade",

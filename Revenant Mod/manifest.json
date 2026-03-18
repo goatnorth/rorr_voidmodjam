@@ -1,8 +1,8 @@
 ﻿{
-	"name": "SampleMod",
+	"name": "The Revenant",
 	"version_number": "1.0.0",
 	"website_url": "https://github.com/ReturnsAPI/ReturnsAPI/wiki",
-	"description": "The short description of your mod goes here.",
+	"description": "TBecome the Revenant a powerful Survivor who has escaped the void.",
 	"dependencies": [
 		"ReturnOfModding-ReturnOfModding-1.1.16",
 		"ReturnsAPI-ReturnsAPI-0.1.49"
