@@ -376,6 +376,7 @@ Callback.add(utility.on_activate, function(actor, skill, slot)
 	actor:set_state(state_utilitystart)
 end)
 
+
 Callback.add(state_utilitystart.on_enter, function(actor, data)
 	actor.image_index = 0
 	data.fired = 0
@@ -394,12 +395,14 @@ Callback.add(state_utilitystart.on_step, function(actor, data)
 end)
 
 Callback.add(state_utility.on_enter, function(actor, data)
+	actor:skill_util_strafe_and_slide_init()
 	actor:actor_animation_set(sprite_shoot1_3, 0.1)
 	utility_duration = 180
 	utility_timer = 30
 end)
 
 Callback.add(state_utility.on_step, function(actor, data)
+	actor:skill_util_strafe_and_slide()
 	utility_duration = utility_duration - 1
 	utility_timer = utility_timer - 1 * actor.attack_speed
 	if utility_timer <= 0 then
