@@ -18,4 +18,5 @@ Initialize.add_hotloadable(function()
     -- Load `item.lua` during the initialization loop
     require("./src/item")
 	require("./src/Revenant")
+	require(".language/english")
 end)
