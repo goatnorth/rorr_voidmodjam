@@ -252,6 +252,7 @@ primary.cooldown = 0
 primary.is_primary = true
 
 
+
 Callback.add(primary.on_activate, function(actor, skill, slot) -- hopefully easy to understand: here the timer is set to start counting down, and it sends you into one of three states based on your current combo
 	primary_timer = 45
 	if combo == 0 then 
@@ -370,6 +371,7 @@ utility.max_stock = 1
 utility.override_strafe_direction = true
 utility.ignore_aim_direction = true
 utility.is_utility = true
+utility.required_interrupt_priority = ActorState.InterruptPriority.ANY
 
 
 Callback.add(utility.on_activate, function(actor, skill, slot)
@@ -401,6 +403,11 @@ Callback.add(state_utility.on_enter, function(actor, data)
 	utility_timer = 30
 end)
 
+Callback.add(state_utility.on_get_interrupt_priority, function(actor, data)
+	return ActorState.InterruptPriority.PRIORITY_ANY
+end)
+
+
 Callback.add(state_utility.on_step, function(actor, data)
 	actor:skill_util_strafe_and_slide()
 	utility_duration = utility_duration - 1
@@ -414,7 +421,7 @@ Callback.add(state_utility.on_step, function(actor, data)
 			utility_timer = 30
 		end
 	end
-	if utility_duration <= 0 then
+	if utility_duration <= 0 or GM.SO.control(actor, nil, "skill3", 0) then
 		
 		actor.pGravity1 = actor.pGravity1_base
 		actor.pVspeed = 0
