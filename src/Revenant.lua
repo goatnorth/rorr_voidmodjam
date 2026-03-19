@@ -389,7 +389,7 @@ Callback.add(state_utilitystart.on_step, function(actor, data)
 end)
 
 Callback.add(state_utility.on_enter, function(actor, data)
-	actor:actor_animation_set(sprite_shoot1_3, 0.1)
+	actor:actor_animation_set(sprite_shoot3, 0.4)
 	utility_duration = 180
 	utility_timer = 30
 end)
