@@ -32,7 +32,7 @@ local sprite_shoot1_2		= Sprite.new("RevenantShoot1_2", path.combine(SPRITE_PATH
 local sprite_shoot1_3		= Sprite.new("RevenantShoot1_3", path.combine(SPRITE_PATH, "swordswing3.png"), 10, 21, 42)
 local sprite_shoot2	= Sprite.new("RevenantShoot2", path.combine(SPRITE_PATH, "shoot2.png"), 7, 11, 20)
 local sprite_shoot2b		= Sprite.new("NemCommandoShoot2B", path.combine(SPRITE_PATH, "shoot2b.png"), 10, 26, 39)
-local sprite_shoot3			= Sprite.new("RevenantShoot3", path.combine(SPRITE_PATH, "shoot3.png"), 6, 4, 13)
+local sprite_shoot3			= Sprite.new("RevenantShoot3", path.combine(SPRITE_PATH, "shoot3.png"), 4, 25, 25)
 local sprite_shoot4_1		= Sprite.new("RevenantShoot4_1", path.combine(SPRITE_PATH, "shoot4_1.png"), 10, 13, 30)
 local sprite_shoot4_2a		= Sprite.new("RevenantShoot4_2A", path.combine(SPRITE_PATH, "shoot4_2a.png"), 6, 7, 24)
 local sprite_shoot4_2b		= Sprite.new("RevenantShoot4_2B", path.combine(SPRITE_PATH, "shoot4_2b.png"), 6, 9, 17)
@@ -109,9 +109,9 @@ Revenant_log.sprite_icon_id = sprite_portrait
 
 Revenant.primary_color = Color.from_rgb(255, 141, 234)
 
--- Revenant.sprite_portrait = sprite_portrait
---Revenant.sprite_portrait_small = sprite_portrait_small
---Revenant.sprite_loadout = sprite_select
+Revenant.sprite_portrait = sprite_portrait
+Revenant.sprite_portrait_small = sprite_portrait_small
+Revenant.sprite_loadout = sprite_select
 
 Revenant.sprite_idle = sprite_idle
 Revenant.sprite_title = sprite_walk
@@ -213,6 +213,7 @@ local special = Revenant:get_skills(Skill.Slot.SPECIAL)[1]
 local specialS = Skill.new("RevenantVBoosted")
 
 Callback.add(Revenant.on_init, function (actor) -- this sets up the combo value and the timer when rev initialises
+
 	local combo = 0
 	local primary_timer = 0
 end)
@@ -368,6 +369,7 @@ utility.is_utility = true
 utility.required_interrupt_priority = ActorState.InterruptPriority.ANY
 
 Callback.add(utility.on_activate, function(actor, skill, slot)
+
 	actor:set_state(state_utilitystart)
 end)
 
@@ -379,19 +381,21 @@ end)
 Callback.add(state_utilitystart.on_step, function(actor, data)
 	if data.fired == 0 then 
 		actor.pGravity1 = 0
-		actor.pVspeed = -2.5 
+		actor.pVspeed = -5 
 		data.fired = 1
 	end
-	actor.pVspeed = actor.pVspeed + 0.1
+	actor.pVspeed = actor.pVspeed + 0.2
 	if actor.pVspeed >= 0 then
 		actor:set_state(state_utility)
 	end
 end)
 
 Callback.add(state_utility.on_enter, function(actor, data)
+		actor:skill_util_strafe_and_slide_init()
+
 	actor:actor_animation_set(sprite_shoot3, 0.4)
 	utility_duration = 180
-	utility_timer = 30
+	utility_timer = 0
 end)
 
 Callback.add(state_utility.on_get_interrupt_priority, function(actor, data)
@@ -400,6 +404,7 @@ end)
 
 
 Callback.add(state_utility.on_step, function(actor, data)
+		actor:skill_util_strafe_and_slide()
 	utility_duration = utility_duration - 1
 	utility_timer = utility_timer - 1 * actor.attack_speed
 	if utility_timer <= 0 then
