@@ -1,3 +1,4 @@
+--Thank you to Digbug, anxvariable, and the starstorm team, if weren't for you guys, we would have never been able to finish this
 local SPRITE_PATH = path.combine(PATH, "sprites/")
 local SOUND_PATH = path.combine(PATH, "sound/")
 
@@ -66,9 +67,10 @@ sprite_walk_back2:set_speed(0.8)
 local sound_select			= Sound.new("UISurvivorsNemCommando", path.combine(SOUND_PATH, "select.ogg"))
 local sound_slash			= Sound.new("NemCommandoGash", path.combine(SOUND_PATH, "damage4.ogg"))
 local sound_stomp			= Sound.new("RevenantStomp", path.combine(SOUND_PATH, "damage2.ogg"))
-local sound_bow	= Sound.new("RevenantBowFire", path.combine(SOUND_PATH, "ice9.ogg"))
+local sound_bow	= Sound.new("RevenantBowFire", path.combine(SOUND_PATH, "Switch3.ogg"))
 local sound_grenade_bounce	= Sound.new("NemCommandoGrenadeBounce", path.combine(SOUND_PATH, "grenade_bounce.ogg"))
 local sound_rocket_fire		= Sound.new("NemCommandoRocketFire", path.combine(SOUND_PATH, "rocket_fire.ogg"))
+local sound_whip		= Sound.new("ReventantWhip", path.combine(SOUND_PATH, "RevenantWhip.ogg"))
 
 -- secondary skill tracer
 local particleTracer = Particle.find("WispGTracer")
@@ -128,43 +130,6 @@ local combo = 0
 local primary_timer = 0
 local utility_timer = 0
 local utility_duration = 0
-
---[[
---skins
-Revenant:add_skin("Mk. II", 1, Sprite.new("NemCommandoSelect2", path.combine(SPRITE_PATH, "select2.png"), 34, 28, 0),
-Sprite.new("NemCommandoPortrait2", path.combine(SPRITE_PATH, "portrait2.png"), 3),
-Sprite.new("NemCommandoPortraitSmall2", path.combine(SPRITE_PATH, "portraitTiny2.png")))
-
-Revenant:add_skin("Ice Blade", 2, Sprite.new("NemCommandoSelect3", path.combine(SPRITE_PATH, "select3.png"), 34, 28, 0),
-Sprite.new("NemCommandoPortrait3", path.combine(SPRITE_PATH, "portrait3.png"), 3),
-Sprite.new("NemCommandoPortraitSmall3", path.combine(SPRITE_PATH, "portraitTiny3.png")))
-
-Revenant:add_skin("Nature's Gift", 3, Sprite.new("NemCommandoSelect4", path.combine(SPRITE_PATH, "select4.png"), 34, 28, 0),
-Sprite.new("NemCommandoPortrait4", path.combine(SPRITE_PATH, "portrait4.png"), 3),
-Sprite.new("NemCommandoPortraitSmall4", path.combine(SPRITE_PATH, "portraitTiny4.png")))
-
-Revenant:add_skin("Callback", 4, Sprite.new("NemCommandoSelect5", path.combine(SPRITE_PATH, "select5.png"), 34, 28, 0),
-Sprite.new("NemCommandoPortrait5", path.combine(SPRITE_PATH, "portrait5.png"), 3),
-Sprite.new("NemCommandoPortraitSmall5", path.combine(SPRITE_PATH, "portraitTiny5.png")))
-]]--
-
--- utility function for updating his basic sprites depending on if his last skill was the gun
-local function Revenant_update_sprites(actor, has_gun)
-	
-		actor.sprite_idle = sprite_idle
-		actor.sprite_walk = sprite_walk
-		actor.sprite_walk_half[4] = sprite_walk_back
-		actor.sprite_jump = sprite_jump
-		actor.sprite_jump_peak = sprite_jump_peak
-		actor.sprite_fall = sprite_fall
-	
-	actor.sprite_idle_half[1] = actor.sprite_idle
-	actor.sprite_walk_half[1] = actor.sprite_walk
-	actor.sprite_jump_half[1] = actor.sprite_jump
-	actor.sprite_jump_peak_half[1] = actor.sprite_jump_peak
-	actor.sprite_fall_half[1] = actor.sprite_fall
-	actor.sprite_walk_last = actor.sprite_walk -- dunno what this is but setting it was required
-end
 
 local function Revenant_update_strafe(actor)
 	-- adjust vertical offset so the upper body bobs up and down depending on the leg animation
@@ -229,6 +194,7 @@ local state_primaryswing3=ActorState.new("SmashingBlade3")
 local state_secondaryshoot=ActorState.new("BrokenArrow")
 local state_utilitystart = ActorState.new("RevFloatLaunch")
 local state_utility = ActorState.new("RevFloat")
+local state_special = ActorState.new("RevCannon")
 
 
 
@@ -361,7 +327,7 @@ end)
 utility.sprite = sprite_skills
 utility.subimage = 2
 utility.damage = 0.8
-utility.cooldown = 6 * 60
+utility.cooldown = 9 * 60
 utility.max_stock = 1
 utility.override_strafe_direction = true
 utility.ignore_aim_direction = true
@@ -379,6 +345,7 @@ Callback.add(state_utilitystart.on_enter, function(actor, data)
 end)
 
 Callback.add(state_utilitystart.on_step, function(actor, data)
+	actor:sound_play(sound_whip, 1, 0.75 + math.random() * 0.05)
 	if data.fired == 0 then 
 		actor.pGravity1 = 0
 		actor.pVspeed = -5 
@@ -405,6 +372,7 @@ end)
 
 Callback.add(state_utility.on_step, function(actor, data)
 		actor:skill_util_strafe_and_slide()
+		actor.pVspeed = 0
 	utility_duration = utility_duration - 1
 	utility_timer = utility_timer - 1 * actor.attack_speed
 	if utility_timer <= 0 then
@@ -449,4 +417,39 @@ specialS.max_stock = 2
 specialS.disable_aim_stall = true
 
 
+local stateSpecial = ActorState.new("nemCommandoSpecial")
 
+Callback.add(special.on_activate, function(actor, skill, slot)
+	actor:set_state(stateSpecial)
+end)
+
+Callback.add(specialS.on_activate, function(actor, skill, slot)
+	actor:set_state(stateSpecial)
+end)
+
+Callback.add(stateSpecial2.on_enter, function(actor, data)
+	actor.image_index = 0
+	data.fired = 0
+	data.airborne = not actor:is_grounded() -- airborne is determined only on state entry so you can do the tech where you jump after pressing the button but before firing
+
+	if data.airborne then
+		actor.sprite_index = sprite_shoot4b_a
+	else
+		actor.sprite_index = sprite_shoot4b
+	end
+	actor:sound_play(sound_rocket_fire, 1, 1)
+end)
+
+Callback.add(stateSpecial2.on_step, function(actor, data)
+	actor:skill_util_fix_hspeed()
+
+	actor:actor_animation_set(actor.sprite_index, 0.2)
+
+	local should_fire = actor.image_index >= 3 or (actor.image_index >= 2 and data.airborne)
+
+	if should_fire and data.fired == 0 then
+		data.fired = 1
+
+		actor:sound_play(gm.constants.wEnforcerShoot1, 1, 0.5 + math.random() * 0.1)
+		actor:sound_play(gm.constants.wEnforcerGrenadeShoot, 1, 0.9 + math.random() * 0.2)
+		actor:screen_shake(3)
