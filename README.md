@@ -1,6 +1,15 @@
 The long description of your mod goes here.  
 This will appear on your Thunderstore mod page.  
 
+--------
+CREDITS:
+Thank you Starstorm Reborn Team for your help and code!
+Thank you to Digbug, anxvariable, and the starstorm team, if weren't for you guys, we would have never been able to finish this
+
+
+
+
+
 ---
 
 ### Installation Instructions

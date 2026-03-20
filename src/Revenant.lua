@@ -1,4 +1,3 @@
---Thank you to Digbug, anxvariable, and the starstorm team, if weren't for you guys, we would have never been able to finish this
 local SPRITE_PATH = path.combine(PATH, "sprites/")
 local SOUND_PATH = path.combine(PATH, "sound/")
 
@@ -410,14 +409,12 @@ special.subimage = 3
 special.upgrade_skill = specialS
 special.cooldown = 6 * 60
 special.disable_aim_stall = true
+special.damage = 3
 specialS.sprite = sprite_skills
 specialS.subimage = 4
 specialS.cooldown = 6 * 60
 specialS.max_stock = 2
 specialS.disable_aim_stall = true
-
-
-local stateSpecial = ActorState.new("nemCommandoSpecial")
 
 Callback.add(special.on_activate, function(actor, skill, slot)
 	actor:set_state(stateSpecial)
@@ -427,7 +424,7 @@ Callback.add(specialS.on_activate, function(actor, skill, slot)
 	actor:set_state(stateSpecial)
 end)
 
-Callback.add(stateSpecial2.on_enter, function(actor, data)
+Callback.add(statespecial.on_enter, function(actor, data)
 	actor.image_index = 0
 	data.fired = 0
 	data.airborne = not actor:is_grounded() -- airborne is determined only on state entry so you can do the tech where you jump after pressing the button but before firing
@@ -440,7 +437,7 @@ Callback.add(stateSpecial2.on_enter, function(actor, data)
 	actor:sound_play(sound_rocket_fire, 1, 1)
 end)
 
-Callback.add(stateSpecial2.on_step, function(actor, data)
+Callback.add(statespecial.on_step, function(actor, data)
 	actor:skill_util_fix_hspeed()
 
 	actor:actor_animation_set(actor.sprite_index, 0.2)
@@ -453,3 +450,114 @@ Callback.add(stateSpecial2.on_step, function(actor, data)
 		actor:sound_play(gm.constants.wEnforcerShoot1, 1, 0.5 + math.random() * 0.1)
 		actor:sound_play(gm.constants.wEnforcerGrenadeShoot, 1, 0.9 + math.random() * 0.2)
 		actor:screen_shake(3)
+
+		local rocket = objRocket:create(actor.x + 8 * actor.image_xscale, actor.y - 8)
+		rocket.parent = actor
+		rocket.direction = actor:skill_util_facing_direction()
+		rocket.image_xscale = actor.image_xscale
+		rocket.scepter = actor:item_count(Item.find("ancientScepter"))
+
+		actor.pHspeed = actor.pHspeed + actor.pHmax * -2 * actor.image_xscale
+		if data.airborne then
+			rocket.direction = 270 + actor.image_xscale * 45
+
+			actor.pVspeed = actor.pVmax * -1.2
+			actor.force_jump_held = true
+		end
+
+		rocket.image_angle = rocket.direction
+		if actor.image_xscale < 0 then
+			rocket.image_angle = rocket.image_angle - 180
+		end
+	end
+
+	actor:skill_util_exit_state_on_anim_end()
+end)
+
+Callback.add(objRocket.on_create, function(inst)
+	inst.speed = ROCKET_SPEED_START
+	inst.mask_index = sprite_rocket_mask
+
+	inst.team = 1
+	inst.parent = -4
+	inst.victim = -4
+	inst.scepter = 0
+
+	inst.lifetime = 3 * 60
+end)
+
+Callback.add(objRocket.on_step, function(inst)
+	local dir = inst.direction
+	local xoff = gm.lengthdir_x(16, dir)
+	local yoff = gm.lengthdir_y(16, dir)
+	
+	particleRocketTrail:set_orientation(dir, dir, 0, 0, 0)
+	particleRocketTrail:create(inst.x - xoff, inst.y - yoff, 1)
+
+	inst.speed = math.min(ROCKET_SPEED_MAX, inst.speed + ROCKET_ACCELERATION)
+
+	local detonate = inst:is_colliding(gm.constants.pBlock)
+
+	if not detonate then
+		local actors = inst:get_collisions(gm.constants.pActorCollisionBase)
+
+		for _, actor in ipairs(actors) do
+			if inst:attack_collision_canhit(actor) then
+				detonate = true
+				inst.victim = actor
+				break
+			end
+		end
+	end
+
+	inst.lifetime = inst.lifetime - 1
+	if inst.lifetime < 0 then
+		detonate = true
+	end
+
+	if detonate then
+		inst:destroy()
+	end
+end)
+
+Callback.add(objRocket.on_destroy, function(inst)
+	local ef = gm.instance_create(inst.x, inst.y, gm.constants.oEfExplosion)
+	ef.sprite_index = gm.constants.sEfSuperMissileExplosion
+
+	inst:sound_play(gm.constants.wTurtleExplosion, 1, 0.8 + math.random() * 0.1)
+	inst:sound_play(gm.constants.wWormExplosion, 1, 0.6 + math.random() * 0.2)
+	inst:sound_play(gm.constants.wExplosiveShot, 1, 1.25 + math.random() * 0.1)
+	inst:screen_shake(10)
+
+	particleRubble1:create(inst.x, inst.y, 15)
+	particleSpark:create(inst.x, inst.y, 6)
+
+	if Instance.exists(inst.parent) and inst.parent:is_authority() then
+		local boosted = inst.scepter > 0
+
+		local buff_shadow_clone = Buff.find("shadowClone")
+		for i=0, inst.parent:buff_count(buff_shadow_clone) do
+			-- direct hit
+			if inst.victim ~= -4 then
+				local direct = inst.parent:fire_direct(inst.victim, 10, inst.direction, inst.x, inst.y).attack_info
+				direct.climb = 8 * 1.35 * (i * 2)
+			end
+
+			-- large stunning aoe
+			-- i wish i could turn off procs on this but it makes knockback not work. ughhh
+			local attack = inst.parent:fire_explosion(inst.x, inst.y, 260, 260, 0.5).attack_info
+			attack.stun = 1.66
+			attack.knockback = 5
+			attack.knockup = 5
+			attack.climb = 8 * 1.35 * (i * 2 + 1)
+
+			if boosted then
+				attack.stun = attack.stun * 1.5
+				attack.knockback = attack.knockback * 2
+				attack.knockup = attack.knockup * 3
+			end
+		end
+	end
+end)
+
+

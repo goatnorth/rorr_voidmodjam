@@ -1,0 +1,550 @@
+
+
+
+THERE IS THE FIRE TRAIL CODE IN HERE, THEY ARE ON THE BOTTOM
+
+
+
+
+
+
+--------------------------------------------------------------------
+
+
+
+
+
+
+
+
+local stateSpecial = ActorState.new("nemCommandoSpecial")
+
+Callback.add(special.on_activate, function(actor, skill, slot)
+	actor:set_state(stateSpecial)
+end)
+
+Callback.add(specialS.on_activate, function(actor, skill, slot)
+	actor:set_state(stateSpecial)
+end)
+
+Callback.add(stateSpecial2.on_enter, function(actor, data)
+	actor.image_index = 0
+	data.fired = 0
+	data.airborne = not actor:is_grounded() -- airborne is determined only on state entry so you can do the tech where you jump after pressing the button but before firing
+
+	if data.airborne then
+		actor.sprite_index = sprite_shoot4b_a
+	else
+		actor.sprite_index = sprite_shoot4b
+	end
+	actor:sound_play(sound_rocket_fire, 1, 1)
+end)
+
+Callback.add(stateSpecial2.on_step, function(actor, data)
+	actor:skill_util_fix_hspeed()
+
+	actor:actor_animation_set(actor.sprite_index, 0.2)
+
+	local should_fire = actor.image_index >= 3 or (actor.image_index >= 2 and data.airborne)
+
+	if should_fire and data.fired == 0 then
+		data.fired = 1
+
+		actor:sound_play(gm.constants.wEnforcerShoot1, 1, 0.5 + math.random() * 0.1)
+		actor:sound_play(gm.constants.wEnforcerGrenadeShoot, 1, 0.9 + math.random() * 0.2)
+		actor:screen_shake(3)
+
+
+
+----------------------------------
+
+
+local stateSpecial2 = ActorState.new("executionerSpecial2")
+
+local objExecutionerAxe = Object.new("ExecutionerAxe")
+objExecutionerAxe:set_sprite(sprite_axe_projectile)
+objExecutionerAxe:set_depth(-500)
+
+local objEfAxeAfterImage = Object.new("EfAxeAfterImage")
+
+Callback.add(special2.on_activate, function(actor, skill, slot)
+	actor:set_state(stateSpecial2)
+end)
+
+Callback.add(special2S.on_activate, function(actor, skill, slot)
+	actor:set_state(stateSpecial2)
+end)
+
+Callback.add(stateSpecial2.on_enter, function(actor, data)
+	data.fired = 0
+	data.scepter = actor:item_count(Item.find("ancientScepter"))
+	actor.image_index = 0
+	actor:sound_play(sound_shoot4b_1, 1, 1)
+
+	if data.scepter > 0 then
+		actor.sprite_index = sprite_shoot5b
+	else
+		actor.sprite_index = sprite_shoot4b
+	end
+end)
+
+Callback.add(stateSpecial2.on_step, function(actor, data)
+	actor:skill_util_fix_hspeed()
+	actor:actor_animation_set(actor.sprite_index, 0.2)
+
+	if data.fired == 0 and actor.image_index >= 4 then
+		data.fired = 1
+
+		local damage = actor:skill_get_damage(special2)
+		if data.scepter > 0 then
+			damage = actor:skill_get_damage(special2S)
+		end
+
+		for i = 0, actor:buff_count(buffShadowClone) do
+			local inst = objExecutionerAxe:create(actor.x + 30 * actor.image_xscale, actor.y - 30)
+			inst.parent = actor
+			inst.team = actor.team
+			inst.direction = 90 - actor.image_xscale * 90
+			inst.image_xscale = actor.image_xscale
+			inst.damage_coeff = damage
+			inst:actor_skin_skinnable_set_skin(actor)
+
+			inst.tX = actor.x + 270 * actor.image_xscale
+			inst.tY = actor.y
+
+			if data.scepter > 0 then
+				inst.sprite_index = sprite_axe_projectileS
+
+				inst = objExecutionerAxe:create(actor.x + 30 * actor.image_xscale, actor.y - 30)
+				inst.parent = actor
+				inst.team = actor.team
+				inst.direction = 90 - actor.image_xscale * 90
+				inst.image_xscale = actor.image_xscale
+				inst.image_yscale = -1
+				inst.sprite_index = sprite_axe_projectileS
+				inst.damage_coeff = damage
+
+				inst.tX = actor.x + 270 * actor.image_xscale
+				inst.tY = actor.y
+			end
+		end
+
+		actor:screen_shake(5)
+		actor:sound_play(sound_shoot4b_2, 1, 1)
+		actor:sound_play(gm.constants.wLizardR_Spear_2, 0.8, 0.9)
+		actor:sound_play(gm.constants.wSawmerang, 0.6, 0.6)
+	end
+
+	actor:skill_util_exit_state_on_anim_end()
+end)
+
+Callback.add(objExecutionerAxe.on_create, function(self)
+	self.parent = -4
+	self.team = 1
+	self.damage_coeff = 1
+	self.image_speed = 0.75
+
+	self.tX = self.x
+	self.tY = self.y
+	self.hitstop = 0
+
+	self.time = 0.0
+
+	Instance.get_data(self).already_hit = {}
+	
+	self:actor_skin_skinnable_init()
+end)
+
+Callback.add(objExecutionerAxe.on_step, function(self)
+	if not Instance.exists(self.parent) then self:destroy() return end
+
+	local attack_rate = math.ceil(10 / self.parent.attack_speed)
+
+	if self.hitstop == 0 then
+		local actors = self:get_collisions(gm.constants.pActorCollisionBase)
+		local did_hit = false
+		local already_hit = Instance.get_data(self).already_hit
+		for _, hit in ipairs(actors) do
+			if self:attack_collision_canhit(hit) then
+				did_hit = true
+				if Net.host then
+					local dmg = self.damage_coeff
+					local proc = not already_hit[hit.id] -- only proc once per hit enemy
+
+					local attack_info = self.parent:fire_direct(hit, dmg, self.direction, hit.x, hit.y, sprite_ion_sparks2, proc).attack_info
+					attack_info.execution = 1
+					attack_info.stun = 0.5
+
+					local actor = GM.attack_collision_resolve(hit)
+					if actor:buff_count(buffFear) > 0 then
+						attack_info:set_critical(true)
+					end
+
+					-- always direct knockback inwards -- effectively sucks victims into the grinder while hitting them
+					if hit.x > self.x then
+						attack_info.knockback_direction = -1
+					else
+						attack_info.knockback_direction = 1
+					end
+
+					already_hit[hit.id] = true
+				end
+
+				self:sound_play(gm.constants.wLizardR_Spear_2, 0.8, 0.8 + math.random() * 0.2)
+				self:sound_play(gm.constants.wCrit, 0.8, 0.4 + math.random() * 0.2)
+				self:screen_shake(5)
+			end
+		end
+
+		if did_hit then
+			self.hitstop = attack_rate
+		end
+	end
+
+	if Global._current_frame % 3 == 0 then
+		local inst = Object.find("EfTrail"):create(self.x, self.y)
+		inst.sprite_index = self.sprite_index
+		inst.image_index = self.image_index
+		inst.image_xscale = self.image_xscale
+		inst.image_blend = Color.from_rgb(110, 129, 195)
+		inst.rate = 0.08
+		inst.depth = self.depth + 1
+	end
+
+	if math.random() < 0.5 then
+		local particle = ionParticle
+		
+		if self.sprite_index == sprite_axe_projectileS then
+			particle = ionParticleS
+		end
+		
+		particle:create(self.x + math.random(-48, 48), self.y + math.random(-48, 48), 1, Particle.System.BELOW)
+	end
+
+	if self.hitstop > 0 then
+		-- handle hitstop
+		self.hitstop = self.hitstop - 1
+
+		if self.hitstop == 0 then
+			-- jump forward a bit to compensate for hitstop
+			-- 0.6x multiplier effectively slows it by 40% while hitting stuff
+			self.time = self.time + 0.02 * attack_rate * 0.6
+		end
+	else
+		-- move forward normally
+		self.time = self.time + 0.02
+	end
+
+	local yscale = self.image_yscale
+
+	if self.time < 1 then
+		-- first half of lifetime -- arcing towards the sweetspot
+		local x1, y1 = self.xstart, self.ystart -- start point
+		local x4, y4 = self.tX, self.tY -- end point
+
+		local lx = (x1 + x4) / 2
+
+		-- 2 points inbetween that form the actual curve
+		local x2, y2 = lx, y1 - 160 * yscale
+		local x3, y3 = x4, y1 - 80 * yscale
+
+		local b = gm.Bezier_Point(self.time, x1, y1, x2, y2, x3, y3, x4, y4)
+		self.x = b[1]
+		self.y = b[2]
+	else
+		-- second half of lifetime -- returning to owner
+		local x1, y1 = self.tX, self.tY -- start point
+		local x4, y4 = self.parent.x, self.parent.y -- end point
+
+		local lx = (x1 + x4) / 2
+
+		-- 2 points inbetween that form the actual curve
+		local x2, y2 = x1, y1 + 80 * yscale
+		local x3, y3 = lx, y1 + 160 * yscale
+
+		local b = gm.Bezier_Point(self.time - 1, x1, y1, x2, y2, x3, y3, x4, y4)
+		self.x = b[1]
+		self.y = b[2]
+
+		if self.time > 2 or Math.distance(self.parent.x, self.parent.y, self.x, self.y) < 40 then
+			self:sound_play(gm.constants.wLizardR_Spear_2, 0.8, 1.3)
+			self:destroy()
+			return
+		end
+	end
+
+	-- make projectile vibrate subtly during hitstop
+	if self.hitstop > 0 then
+		self.x = self.x + math.random(-4, 4)
+		self.y = self.y + math.random(-4, 4)
+	end
+end)
+
+Callback.add(objExecutionerAxe.on_draw, function(self)
+	self:actor_skin_skinnable_draw_self()
+end)
+
+
+
+_______________________________
+Callback.add(special.on_activate, function(actor, skill, slot) 
+	actor:set_state(state_special)
+end)
+  Callback.add(state_special.on_enter,function(actor,data) 
+	actor.image_index = 0
+    data.fired = 0
+	dir = actor:skill_util_facing_direction()
+	Object.new("RevenantOrb")
+
+	end)
+on_create Callback
+
+Callback.add(state_special.on_step, function(actor,data)
+	actor:skill_util_fix_hspeed()
+	actor:actor_animation_set(sprite_shoot2, 0.2)
+	if data.fired == 0 and actor.image_index >= 5.0 then
+		actor:sound_play(sound_bow, 1, 0.75 + math.random() * 0.05)
+		local damage=actor:skill_get_damage(special)
+		if actor:is_authority() then
+		local attack = actor:fire_bullet(actor.x, actor.y, 1800, dir, damage, nil, gm.constants.sSparks23r, Tracer.PILOT_PRIMARY_STRONG)
+		end
+		data.fired=1
+	end
+	actor:skill_util_exit_state_on_anim_end()
+end)
+---------------------------------------------------------
+
+if instance.x ~= data.xprevious and instance:is_colliding(Object.wrap(gm.constants.pSolidBulletCollision), instance.x, instance.y + 8) then
+    local i = 0
+    while i <= math.floor(math.abs(data.xprevious - instance.x) / 11) do
+        local trail = instance:collision_rectangle((instance.x + (i * 11 * Math.sign(instance.x - data.xprevious))) - 11, instance.bbox_bottom, instance.x + (i * 11 * Math.sign(instance.x - data.xprevious)) + 11, instance.bbox_bottom, gm.constants.oFireTrail, 0, 0)
+
+        if Instance.exists(trail) then
+            if trail.parent == instance.parent.id and trail.sprite_index == gm.constants.sEfFireTrail then
+                trail:alarm_set(1, 60 * (13 + (2 * math.random())))
+                trail.image_alpha = 1
+            end
+        else
+            Global.firetrail_do_snap = false
+            trail = Object.find("FireTrail", "ror"):create(instance.x + (i * 11 * Math.sign(instance.x - data.xprevious)), instance.bbox_bottom + 1)
+            trail.team = instance.team
+            trail.parent = instance.parent.id
+            instance.parent:damage_default(trail, 0.55)
+            Global.firetrail_do_snap = true
+        end
+        i = i + 1
+    end
+    i = nil
+end
+-----------------------------------------
+local stateSpecial2 = ActorState.new("nemCommandoSpecial2")
+
+Callback.add(special2.on_activate, function(actor, skill, slot)
+	actor:set_state(stateSpecial2)
+end)
+
+Callback.add(special2S.on_activate, function(actor, skill, slot)
+	actor:set_state(stateSpecial2)
+end)
+
+Callback.add(stateSpecial2.on_enter, function(actor, data)
+	actor.image_index = 0
+	data.fired = 0
+	data.airborne = not actor:is_grounded() -- airborne is determined only on state entry so you can do the tech where you jump after pressing the button but before firing
+
+	if data.airborne then
+		actor.sprite_index = sprite_shoot4b_a
+	else
+		actor.sprite_index = sprite_shoot4b
+	end
+	actor:sound_play(sound_rocket_fire, 1, 1)
+end)
+
+Callback.add(stateSpecial2.on_step, function(actor, data)
+	actor:skill_util_fix_hspeed()
+
+	actor:actor_animation_set(actor.sprite_index, 0.2)
+
+	local should_fire = actor.image_index >= 3 or (actor.image_index >= 2 and data.airborne)
+
+	if should_fire and data.fired == 0 then
+		data.fired = 1
+
+		actor:sound_play(gm.constants.wEnforcerShoot1, 1, 0.5 + math.random() * 0.1)
+		actor:sound_play(gm.constants.wEnforcerGrenadeShoot, 1, 0.9 + math.random() * 0.2)
+		actor:screen_shake(3)
+
+		if actor:is_authority() then
+			-- fire backblast. there's zero reason for this to exist, but it's funny!
+			local buff_shadow_clone = Buff.find("shadowClone")
+			for i=0, actor:buff_count(buff_shadow_clone) do
+				local backblast = actor:fire_explosion(actor.x - 50 * actor.image_xscale, actor.y-12, 100, 60, 1.0)
+				if data.airborne then
+					-- rotate explosion attack ... cursed, but funny
+					backblast.image_angle = actor.image_xscale * -45
+					backblast.y = backblast.y - 50
+				end
+				backblast.attack_info.climb = i * 8 * 1.35
+				backblast.attack_info.knockback = 4
+				backblast.attack_info.knockback_direction = -actor.image_xscale
+			end
+		end
+
+		local rocket = objRocket:create(actor.x + 8 * actor.image_xscale, actor.y - 8)
+		rocket.parent = actor
+		rocket.direction = actor:skill_util_facing_direction()
+		rocket.image_xscale = actor.image_xscale
+		rocket.scepter = actor:item_count(Item.find("ancientScepter"))
+
+		actor.pHspeed = actor.pHspeed + actor.pHmax * -2 * actor.image_xscale
+		if data.airborne then
+			rocket.direction = 270 + actor.image_xscale * 45
+
+			actor.pVspeed = actor.pVmax * -1.2
+			actor.force_jump_held = true
+		end
+
+		rocket.image_angle = rocket.direction
+		if actor.image_xscale < 0 then
+			rocket.image_angle = rocket.image_angle - 180
+		end
+	end
+
+	actor:skill_util_exit_state_on_anim_end()
+end)
+
+Callback.add(objRocket.on_create, function(inst)
+	inst.speed = ROCKET_SPEED_START
+	inst.mask_index = sprite_rocket_mask
+
+	inst.team = 1
+	inst.parent = -4
+	inst.victim = -4
+	inst.scepter = 0
+
+	inst.lifetime = 3 * 60
+end)
+
+Callback.add(objRocket.on_step, function(inst)
+	local dir = inst.direction
+	local xoff = gm.lengthdir_x(16, dir)
+	local yoff = gm.lengthdir_y(16, dir)
+	
+	particleRocketTrail:set_orientation(dir, dir, 0, 0, 0)
+	particleRocketTrail:create(inst.x - xoff, inst.y - yoff, 1)
+
+	inst.speed = math.min(ROCKET_SPEED_MAX, inst.speed + ROCKET_ACCELERATION)
+
+	local detonate = inst:is_colliding(gm.constants.pBlock)
+
+	if not detonate then
+		local actors = inst:get_collisions(gm.constants.pActorCollisionBase)
+
+		for _, actor in ipairs(actors) do
+			if inst:attack_collision_canhit(actor) then
+				detonate = true
+				inst.victim = actor
+				break
+			end
+		end
+	end
+
+	inst.lifetime = inst.lifetime - 1
+	if inst.lifetime < 0 then
+		detonate = true
+	end
+
+	if detonate then
+		inst:destroy()
+	end
+end)
+
+Callback.add(objRocket.on_destroy, function(inst)
+	local ef = gm.instance_create(inst.x, inst.y, gm.constants.oEfExplosion)
+	ef.sprite_index = gm.constants.sEfSuperMissileExplosion
+
+	inst:sound_play(gm.constants.wTurtleExplosion, 1, 0.8 + math.random() * 0.1)
+	inst:sound_play(gm.constants.wWormExplosion, 1, 0.6 + math.random() * 0.2)
+	inst:sound_play(gm.constants.wExplosiveShot, 1, 1.25 + math.random() * 0.1)
+	inst:screen_shake(10)
+
+	particleRubble1:create(inst.x, inst.y, 15)
+	particleSpark:create(inst.x, inst.y, 6)
+
+	if Instance.exists(inst.parent) and inst.parent:is_authority() then
+		local boosted = inst.scepter > 0
+
+		local buff_shadow_clone = Buff.find("shadowClone")
+		for i=0, inst.parent:buff_count(buff_shadow_clone) do
+			-- direct hit
+			if inst.victim ~= -4 then
+				local direct = inst.parent:fire_direct(inst.victim, 10, inst.direction, inst.x, inst.y).attack_info
+				direct.climb = 8 * 1.35 * (i * 2)
+			end
+
+			-- large stunning aoe
+			-- i wish i could turn off procs on this but it makes knockback not work. ughhh
+			local attack = inst.parent:fire_explosion(inst.x, inst.y, 260, 260, 0.5).attack_info
+			attack.stun = 1.66
+			attack.knockback = 5
+			attack.knockup = 5
+			attack.climb = 8 * 1.35 * (i * 2 + 1)
+
+			if boosted then
+				attack.stun = attack.stun * 1.5
+				attack.knockback = attack.knockback * 2
+				attack.knockup = attack.knockup * 3
+			end
+		end
+	end
+end)
+---------------------------------------------------
+Callback.add(special.on_activate, function(actor, skill, slot) 
+	actor:set_state(state_special)
+end)
+  Callback.add(state_special.on_enter,function(actor,data) 
+	actor.image_index = 0
+    data.fired = 0
+	dir = actor:skill_util_facing_direction()
+	Object.new("RevenantOrb")
+
+	end)
+
+Callback.on_create(state_special.on_step, function(actor,data)
+	actor:skill_util_fix_hspeed()
+	actor:actor_animation_set(sprite_shoot2, 0.2)
+	if data.fired == 0 and actor.image_index >= 5.0 then
+		actor:sound_play(sound_bow, 1, 0.75 + math.random() * 0.05)
+		local damage=actor:skill_get_damage(special)
+		if actor:is_authority() then
+		local attack = actor:fire_bullet(actor.x, actor.y, 1800, dir, damage, nil, gm.constants.sSparks23r, Tracer.PILOT_PRIMARY_STRONG)
+		end
+		data.fired=1
+	end
+	actor:skill_util_exit_state_on_anim_end()
+end)
+__________________________________________________________
+if instance.x ~= data.xprevious and instance:is_colliding(Object.wrap(gm.constants.pSolidBulletCollision), instance.x, instance.y + 8) then
+    local i = 0
+    while i <= math.floor(math.abs(data.xprevious - instance.x) / 11) do
+        local trail = instance:collision_rectangle((instance.x + (i * 11 * Math.sign(instance.x - data.xprevious))) - 11, instance.bbox_bottom, instance.x + (i * 11 * Math.sign(instance.x - data.xprevious)) + 11, instance.bbox_bottom, gm.constants.oFireTrail, 0, 0)
+
+        if Instance.exists(trail) then
+            if trail.parent == instance.parent.id and trail.sprite_index == gm.constants.sEfFireTrail then
+                trail:alarm_set(1, 60 * (13 + (2 * math.random())))
+                trail.image_alpha = 1
+            end
+        else
+            Global.firetrail_do_snap = false
+            trail = Object.find("FireTrail", "ror"):create(instance.x + (i * 11 * Math.sign(instance.x - data.xprevious)), instance.bbox_bottom + 1)
+            trail.team = instance.team
+            trail.parent = instance.parent.id
+            instance.parent:damage_default(trail, 0.55)
+            Global.firetrail_do_snap = true
+        end
+        i = i + 1
+    end
+    i = nil
+end
+-------------------------
+
