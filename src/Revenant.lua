@@ -6,6 +6,9 @@ local sprite_portrait		= Sprite.new("RevenantPortrait", path.combine(SPRITE_PATH
 local sprite_portrait_small	= Sprite.new("RevenantPortraitSmall", path.combine(SPRITE_PATH, "portraitTiny.png"))
 local sprite_credits		= Sprite.new("CreditsSurvivorRevenant", path.combine(SPRITE_PATH, "credits.png"), 1, 7, 11)
 local sprite_palette 		= Sprite.new("RevenantPalette", path.combine(SPRITE_PATH, "palette.png"))
+local portrait_palette		=Sprite.new("RevenantPortraitPalette", path.combine(SPRITE_PATH, "palette_portrait.png"))
+local loadout_palette		=Sprite.new("RevenantLoadoutPalette", path.combine(SPRITE_PATH, "palette_loadout.png"))
+
 
 local sprite_idle			= Sprite.new("RevenantIdle", path.combine(SPRITE_PATH, "idle.png"), 1, 9, 20)
 local sprite_idle2			= Sprite.new("RevenantIdle2", path.combine(SPRITE_PATH, "idle2.png"), 1, 9, 20)
@@ -63,7 +66,7 @@ sprite_walk_half:set_speed(0.8)
 sprite_walk_back:set_speed(0.8)
 sprite_walk_back2:set_speed(0.8)
 
-local sound_select			= Sound.new("UISurvivorsNemCommando", path.combine(SOUND_PATH, "select.ogg"))
+local sound_select			= Sound.new("UISurvivorsRevenant", path.combine(SOUND_PATH, "select.ogg"))
 local sound_slash			= Sound.new("NemCommandoGash", path.combine(SOUND_PATH, "damage4.ogg"))
 local sound_stomp			= Sound.new("RevenantStomp", path.combine(SOUND_PATH, "damage2.ogg"))
 local sound_bow	= Sound.new("RevenantBowFire", path.combine(SOUND_PATH, "Switch3.ogg"))
@@ -92,17 +95,29 @@ local ROCKET_ACCELERATION = 0.15
 
 Revenant:set_stats_base({
 	health = 210,
-	damage = 12,
+	damage = 15,
 	regen = 0.02,
 	armor = 7,
 })
 
 Revenant:set_stats_level({
 	health = 43,
-	damage = 3,
+	damage = 4.25,
 	regen = 0.008,
 	armor = 4,
 })
+
+--skins
+
+mytable = {
+"Revenant Mod Normal",
+"Revenant Mod High Court",
+"Revenant Mod Red Plane",
+"Revenant Mod Nukhana"
+}	
+
+Revenant:add_skin(mytable, sprite_palette, portrait_palette, loadout_palette)
+
 
 local Revenant_log = SurvivorLog.new_from_survivor(Revenant)
 Revenant_log.portrait_id = sprite_log
@@ -208,7 +223,7 @@ end)
 -- PRIMARY SKILL, SMASHING BLADE this shouldnt have been as hard as it was to make
 primary.sprite = sprite_skills
 primary.subimage = 0
-primary.damage = 1.2
+primary.damage = 1.4
 primary.cooldown = 0
 primary.is_primary = true
 
@@ -261,7 +276,7 @@ Callback.add(state_primaryswing2.on_step, function(actor,data)
 		actor:skill_util_update_heaven_cracker(actor, damage)
 		if actor:is_authority() then
 		for i=0, actor:buff_count(Buff.find("shadowClone")) do
-		local attack=actor:fire_explosion(actor.x+10*actor.image_xscale, actor.y, 100, 50, damage, nil, nil, true)
+		local attack=actor:fire_explosion(actor.x+10*actor.image_xscale, actor.y, 100, 50, damage*1.2, nil, nil, true)
 		end
 		end
 		data.fired=1
@@ -285,7 +300,7 @@ Callback.add(state_primaryswing3.on_step, function(actor,data)
 		actor:skill_util_update_heaven_cracker(actor, damage)
 		if actor:is_authority() then
 		for i=0, actor:buff_count(Buff.find("shadowClone")) do
-			local attack=actor:fire_explosion(actor.x+10*actor.image_xscale, actor.y, 100, 50, damage*1.2, nil, nil, true)
+			local attack=actor:fire_explosion(actor.x+10*actor.image_xscale, actor.y, 100, 50, damage*1.4, nil, nil, true)
 			attack.knockup = 5
 		end
 		end

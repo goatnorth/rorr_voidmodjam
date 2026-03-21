@@ -13,23 +13,23 @@ return {
 	skill = {
 		RevenantZ = {
 			name = "Smashing Blade",
-			description = "Swing your blade in a combo for <y>120% damage, with each part of the combo doing slightly more damage.</c>"
+			description = "Swing your blade in a <p>combo</c> for <y>140% damage,</c> with each <y>part of the</c> <p>combo</c> doing <y>slightly more damage.</c>"
 		},
 		RevenantX = {
 			name = "Broken Arrow",
-			description = "Transform your blade and fire an arrow that pulls enemies towards you for 100% damage."
+			description = "Transform your blade and <p>fire an arrow that pulls enemies towards you</c> for <y>100% damage.</c>"
 		},
 		RevenantC =  {
 			name = "Lashing Whip",
-			description = "<y>Leap up, transforming your blade into a whip damaging all enemies around you 80% damage repeating."
+			description = "Leap up, transforming your blade into a <p>whip</c> damaging all enemies around you <y>80% damage repeating.</c>"
 		},
 		RevenantV = {
 			name = "Corrupted Cannon",
-			description = "Transform your blade into a cannon firing a large void bomb for 300% damage."
+			description = "Transform your blade into a cannon firing a <p>large void bomb</c> for <y>300% damage.</c>"
 		},
 		RevenantVBoosted = {
 			name = "Ultima Cannon",
-			description = "Transform your blade into a cannon firing a large void bomb for 400% damage and leave a trail dealing 30% damage per tick."
+			description = "Transform your blade into a cannon firing a <p>large void bomb</c> for <y>400% damage</c> and leave a trail dealing <y>30% damage per tick.</c>"
 		},
 			}
 }
