@@ -47,7 +47,7 @@ local sprite_skills			= Sprite.new("RevenantSkills", path.combine(SPRITE_PATH, "
 local sprite_dust			= Sprite.new("RevenantDust", path.combine(SPRITE_PATH, "dust.png"), 3, 21, 12)
 
 local sprite_explosion		= Sprite.new("NemCommandoExplosion", path.combine(SPRITE_PATH, "grenade_explosion.png"), 5, 117, 102)
-local sprite_rocket			= Sprite.new("NemCommandoRocket", path.combine(SPRITE_PATH, "rocket.png"), 3, 33, 10)
+local sprite_rocket			= Sprite.new("NemCommandoRocket", path.combine(SPRITE_PATH, "cannonorb.png"), 4, 33, 10)
 local sprite_rocket_mask	= Sprite.new("NemCommandoRocketMask", path.combine(SPRITE_PATH, "rocketMask.png"), 1, 0, 2)
 
 local sprite_portal 		= Sprite.new("NemCommandoPortal", path.combine(SPRITE_PATH, "portal.png"), 25, 78, 100)
@@ -67,10 +67,11 @@ local sound_select			= Sound.new("UISurvivorsNemCommando", path.combine(SOUND_PA
 local sound_slash			= Sound.new("NemCommandoGash", path.combine(SOUND_PATH, "damage4.ogg"))
 local sound_stomp			= Sound.new("RevenantStomp", path.combine(SOUND_PATH, "damage2.ogg"))
 local sound_bow	= Sound.new("RevenantBowFire", path.combine(SOUND_PATH, "Switch3.ogg"))
-local sound_grenade_bounce	= Sound.new("NemCommandoGrenadeBounce", path.combine(SOUND_PATH, "grenade_bounce.ogg"))
-local sound_rocket_fire		= Sound.new("NemCommandoRocketFire", path.combine(SOUND_PATH, "rocket_fire.ogg"))
-local sound_whip		= Sound.new("ReventantWhip", path.combine(SOUND_PATH, "RevenantWhip.ogg"))
-
+local sound_specialfire	= Sound.new("RevenantSpecialFire", path.combine(SOUND_PATH, "Fog1.ogg"))
+local sound_specialcharge		= Sound.new("RevenantSpecialCharge", path.combine(SOUND_PATH, "Fog2.ogg"))
+local sound_whip		= Sound.new("RevenantWhip", path.combine(SOUND_PATH, "Evasion1.ogg"))
+local sound_jump		= Sound.new("RevenantJump", path.combine(SOUND_PATH, "Wind2.ogg"))
+local sound_orb			= Sound.new("RevenantOrb", path.combine(SOUND_PATH, "Reflection.ogg"))
 -- secondary skill tracer
 local particleTracer = Particle.find("WispGTracer")
 
@@ -85,20 +86,20 @@ local particleSpark = Particle.find("Spark")
 
 local Revenant = Survivor.new("Revenant")
 
-local ROCKET_SPEED_START = 0
-local ROCKET_SPEED_MAX = 24
-local ROCKET_ACCELERATION = 0.35
+local ROCKET_SPEED_START = 2
+local ROCKET_SPEED_MAX = 4
+local ROCKET_ACCELERATION = 0.15
 
 Revenant:set_stats_base({
 	health = 210,
-	damage = 34,
+	damage = 12,
 	regen = 0.02,
 	armor = 7,
 })
 
 Revenant:set_stats_level({
 	health = 43,
-	damage = 7,
+	damage = 3,
 	regen = 0.008,
 	armor = 4,
 })
@@ -234,8 +235,11 @@ Callback.add(state_primaryswing1.on_step, function(actor,data)
 	actor:actor_animation_set(sprite_shoot1_1, 0.2)
 	if data.fired == 0 and actor.image_index >= 2.0 then
 		local damage=actor:skill_get_damage(primary)
+		actor:skill_util_update_heaven_cracker(actor, damage)
 		if actor:is_authority() then
-		local attack=actor:fire_explosion(actor.x+10*actor.image_xscale, actor.y, 100, 50, damage, nil, nil, true)
+		for i=0, actor:buff_count(Buff.find("shadowClone")) do
+			local attack=actor:fire_explosion(actor.x+10*actor.image_xscale, actor.y, 100, 50, damage, nil, nil, true)
+		end
 		end
 		data.fired=1 -- setting data.fired to 1 here makes it so that we only do the attack once whenever we enter a the state, otherwise this whole if statement would happen every frame we're in the state
 		combo=1
@@ -254,8 +258,11 @@ Callback.add(state_primaryswing2.on_step, function(actor,data)
 	actor:actor_animation_set(sprite_shoot1_2, 0.2)
 	if data.fired == 0 and actor.image_index >= 2.0 then
 		local damage=actor:skill_get_damage(primary)
+		actor:skill_util_update_heaven_cracker(actor, damage)
 		if actor:is_authority() then
+		for i=0, actor:buff_count(Buff.find("shadowClone")) do
 		local attack=actor:fire_explosion(actor.x+10*actor.image_xscale, actor.y, 100, 50, damage, nil, nil, true)
+		end
 		end
 		data.fired=1
 		combo=2
@@ -273,10 +280,14 @@ Callback.add(state_primaryswing3.on_step, function(actor,data)
 	actor:skill_util_fix_hspeed()
 	actor:actor_animation_set(sprite_shoot1_3, 0.2)
 	if data.fired == 0 and actor.image_index >= 4.0 then
-		actor:sound_play(sound_stomp, 1, 0.75 + math.random() * 0.05)
+		actor:sound_play(sound_stomp, 1, 0.75 + math.random() * 0.05)	
 		local damage=actor:skill_get_damage(primary)
+		actor:skill_util_update_heaven_cracker(actor, damage)
 		if actor:is_authority() then
-		local attack=actor:fire_explosion(actor.x+10*actor.image_xscale, actor.y, 100, 50, damage*1.2, nil, nil, true)
+		for i=0, actor:buff_count(Buff.find("shadowClone")) do
+			local attack=actor:fire_explosion(actor.x+10*actor.image_xscale, actor.y, 100, 50, damage*1.2, nil, nil, true)
+			attack.knockup = 5
+		end
 		end
 		data.fired=1
 		combo=0
@@ -313,8 +324,10 @@ Callback.add(state_secondaryshoot.on_step, function(actor,data)
 		actor:sound_play(sound_bow, 1, 0.75 + math.random() * 0.05)
 		local damage=actor:skill_get_damage(secondary)
 		if actor:is_authority() then
-		local attack = actor:fire_bullet(actor.x, actor.y, 1800, dir, damage, nil, gm.constants.sSparks23r, Tracer.PILOT_PRIMARY_STRONG)
-		attack.attack_info:set_knockback(-1*actor.image_xscale, 30, 8, 1)
+		for i=0, actor:buff_count(Buff.find("shadowClone")) do
+			local attack = actor:fire_bullet(actor.x, actor.y, 1800, dir, damage, nil, gm.constants.sSparks23r, Tracer.PILOT_PRIMARY_STRONG)
+			attack.attack_info:set_knockback(-1*actor.image_xscale, 30, 8, 1)
+		end
 		end
 		data.fired=1
 	end
@@ -339,12 +352,13 @@ Callback.add(utility.on_activate, function(actor, skill, slot)
 end)
 
 Callback.add(state_utilitystart.on_enter, function(actor, data)
+	actor:sound_play(sound_jump, 1, 0.75 + math.random() * 0.05)
+	actor:actor_animation_set(sprite_jump, 0.2)
 	actor.image_index = 0
 	data.fired = 0
 end)
 
 Callback.add(state_utilitystart.on_step, function(actor, data)
-	actor:sound_play(sound_whip, 1, 0.75 + math.random() * 0.05)
 	if data.fired == 0 then 
 		actor.pGravity1 = 0
 		actor.pVspeed = -5 
@@ -375,10 +389,13 @@ Callback.add(state_utility.on_step, function(actor, data)
 	utility_duration = utility_duration - 1
 	utility_timer = utility_timer - 1 * actor.attack_speed
 	if utility_timer <= 0 then
+		actor:sound_play(sound_whip, 1, 0.75 + math.random() * 0.05)
 		local damage=actor:skill_get_damage(utility)
 		if actor:is_authority() then
+			for i=0, actor:buff_count(Buff.find("shadowClone")) do
 			local attack=actor:fire_explosion(actor.x, actor.y, 100, 100, damage, nil, nil, true)
 			attack.attack_info:set_knockback(1*actor.image_xscale, 30, 1, 1)
+			end
 			utility_timer = 30
 		end
 	end
@@ -413,70 +430,47 @@ special.damage = 3
 specialS.sprite = sprite_skills
 specialS.subimage = 4
 specialS.cooldown = 6 * 60
-specialS.max_stock = 2
 specialS.disable_aim_stall = true
 
 Callback.add(special.on_activate, function(actor, skill, slot)
-	actor:set_state(stateSpecial)
+	actor:set_state(state_special)
 end)
 
 Callback.add(specialS.on_activate, function(actor, skill, slot)
-	actor:set_state(stateSpecial)
+	actor:set_state(state_special)
 end)
 
-Callback.add(statespecial.on_enter, function(actor, data)
+Callback.add(state_special.on_enter, function(actor, data)
+	actor:sound_play(sound_specialcharge, 1, 0.9 + math.random() * 0.2)
 	actor.image_index = 0
 	data.fired = 0
-	data.airborne = not actor:is_grounded() -- airborne is determined only on state entry so you can do the tech where you jump after pressing the button but before firing
-
-	if data.airborne then
-		actor.sprite_index = sprite_shoot4b_a
-	else
-		actor.sprite_index = sprite_shoot4b
-	end
-	actor:sound_play(sound_rocket_fire, 1, 1)
 end)
 
-Callback.add(statespecial.on_step, function(actor, data)
-	actor:skill_util_fix_hspeed()
-
-	actor:actor_animation_set(actor.sprite_index, 0.2)
-
-	local should_fire = actor.image_index >= 3 or (actor.image_index >= 2 and data.airborne)
-
-	if should_fire and data.fired == 0 then
-		data.fired = 1
-
-		actor:sound_play(gm.constants.wEnforcerShoot1, 1, 0.5 + math.random() * 0.1)
-		actor:sound_play(gm.constants.wEnforcerGrenadeShoot, 1, 0.9 + math.random() * 0.2)
-		actor:screen_shake(3)
-
-		local rocket = objRocket:create(actor.x + 8 * actor.image_xscale, actor.y - 8)
-		rocket.parent = actor
-		rocket.direction = actor:skill_util_facing_direction()
-		rocket.image_xscale = actor.image_xscale
-		rocket.scepter = actor:item_count(Item.find("ancientScepter"))
-
-		actor.pHspeed = actor.pHspeed + actor.pHmax * -2 * actor.image_xscale
-		if data.airborne then
-			rocket.direction = 270 + actor.image_xscale * 45
-
-			actor.pVspeed = actor.pVmax * -1.2
-			actor.force_jump_held = true
+Callback.add(state_special.on_step, function(actor, data)
+		actor:actor_animation_set(sprite_shoot4_2a, 0.2)
+		if actor.image_index >= 3 and data.fired == 0 then
+			data.fired = 1
+			actor:sound_play(sound_specialfire, 1, 0.9 + math.random() * 0.2)
+			actor:screen_shake(3)
+			local rocket = objRocket:create(actor.x + 8 * actor.image_xscale, actor.y - 8)
+			rocket.parent = actor
+			rocket.direction = actor:skill_util_facing_direction()
+			rocket.image_xscale = actor.image_xscale
+			rocket.scepter = actor:item_count(Item.find("ancientScepter"))
+			
+			actor.pHspeed = actor.pHspeed + actor.pHmax * -2 * actor.image_xscale
+			
+			rocket.image_angle = rocket.direction
+			if actor.image_xscale < 0 then
+				rocket.image_angle = rocket.image_angle - 180
+			end
 		end
-
-		rocket.image_angle = rocket.direction
-		if actor.image_xscale < 0 then
-			rocket.image_angle = rocket.image_angle - 180
-		end
-	end
-
-	actor:skill_util_exit_state_on_anim_end()
+		actor:skill_util_exit_state_on_anim_end()
 end)
 
 Callback.add(objRocket.on_create, function(inst)
+	local data = Instance.get_data(inst)
 	inst.speed = ROCKET_SPEED_START
-	inst.mask_index = sprite_rocket_mask
 
 	inst.team = 1
 	inst.parent = -4
@@ -484,16 +478,24 @@ Callback.add(objRocket.on_create, function(inst)
 	inst.scepter = 0
 
 	inst.lifetime = 3 * 60
-end)
+	
+	if inst.scepter > 0 then
+	inst.damage = 4
+	else
+	inst.damage = 3
+	end
+	
+	data.hit_list = {}
+	data.xprevious = inst.x
+end)		
 
 Callback.add(objRocket.on_step, function(inst)
+	local data = Instance.get_data(inst)
 	local dir = inst.direction
 	local xoff = gm.lengthdir_x(16, dir)
 	local yoff = gm.lengthdir_y(16, dir)
 	
-	particleRocketTrail:set_orientation(dir, dir, 0, 0, 0)
-	particleRocketTrail:create(inst.x - xoff, inst.y - yoff, 1)
-
+	local data = Instance.get_data(inst)
 	inst.speed = math.min(ROCKET_SPEED_MAX, inst.speed + ROCKET_ACCELERATION)
 
 	local detonate = inst:is_colliding(gm.constants.pBlock)
@@ -502,14 +504,43 @@ Callback.add(objRocket.on_step, function(inst)
 		local actors = inst:get_collisions(gm.constants.pActorCollisionBase)
 
 		for _, actor in ipairs(actors) do
-			if inst:attack_collision_canhit(actor) then
-				detonate = true
-				inst.victim = actor
-				break
+			if inst:attack_collision_canhit(actor) and not data.hit_list[actor.id] then
+			local buff_shadow_clone = Buff.find("shadowClone")
+			for i=0, inst.parent:buff_count(buff_shadow_clone) do
+			if Net.host then
+				
+				local attack = inst.parent:fire_direct(actor, inst.damage, inst.direction, inst.x, inst.y, gm.constants.sBite3).attack_info
+			end
+			end
+			inst:sound_play(sound_orb, 0.5, 0.9)
+			data.hit_list[actor.id] = true
 			end
 		end
 	end
+	
+	if inst.x ~= data.xprevious and inst:is_colliding(Object.wrap(gm.constants.pSolidBulletCollision), inst.x, inst.y + 8) and inst.scepter > 0 then
+    local i = 0
+    while i <= math.floor(math.abs(data.xprevious - inst.x) / 11) do
+        local trail = inst:collision_rectangle((inst.x + (i * 11 * Math.sign(inst.x - data.xprevious))) - 11, inst.bbox_bottom, inst.x + (i * 11 * Math.sign(inst.x - data.xprevious)) + 11, inst.bbox_bottom, gm.constants.oFireTrail, 0, 0)
 
+        if Instance.exists(trail) then
+            if trail.parent == inst.parent.id and trail.sprite_index == gm.constants.sEfFireTrail then
+                trail:alarm_set(1, 60 * (13 + (2 * math.random())))
+                trail.image_alpha = 1
+            end
+        else
+            Global.firetrail_do_snap = false
+            trail = Object.find("FireTrail", "ror"):create(inst.x + (i * 11 * Math.sign(inst.x - data.xprevious)), inst.bbox_bottom + 1)
+            trail.team = inst.team
+            trail.parent = inst.parent.id
+            inst.parent:damage_default(trail, 0.3)
+            Global.firetrail_do_snap = true
+        end
+        i = i + 1
+    end
+	end
+    i = nil
+	data.xprevious = inst.x
 	inst.lifetime = inst.lifetime - 1
 	if inst.lifetime < 0 then
 		detonate = true
@@ -521,43 +552,5 @@ Callback.add(objRocket.on_step, function(inst)
 end)
 
 Callback.add(objRocket.on_destroy, function(inst)
-	local ef = gm.instance_create(inst.x, inst.y, gm.constants.oEfExplosion)
-	ef.sprite_index = gm.constants.sEfSuperMissileExplosion
-
-	inst:sound_play(gm.constants.wTurtleExplosion, 1, 0.8 + math.random() * 0.1)
-	inst:sound_play(gm.constants.wWormExplosion, 1, 0.6 + math.random() * 0.2)
-	inst:sound_play(gm.constants.wExplosiveShot, 1, 1.25 + math.random() * 0.1)
-	inst:screen_shake(10)
-
-	particleRubble1:create(inst.x, inst.y, 15)
-	particleSpark:create(inst.x, inst.y, 6)
-
-	if Instance.exists(inst.parent) and inst.parent:is_authority() then
-		local boosted = inst.scepter > 0
-
-		local buff_shadow_clone = Buff.find("shadowClone")
-		for i=0, inst.parent:buff_count(buff_shadow_clone) do
-			-- direct hit
-			if inst.victim ~= -4 then
-				local direct = inst.parent:fire_direct(inst.victim, 10, inst.direction, inst.x, inst.y).attack_info
-				direct.climb = 8 * 1.35 * (i * 2)
-			end
-
-			-- large stunning aoe
-			-- i wish i could turn off procs on this but it makes knockback not work. ughhh
-			local attack = inst.parent:fire_explosion(inst.x, inst.y, 260, 260, 0.5).attack_info
-			attack.stun = 1.66
-			attack.knockback = 5
-			attack.knockup = 5
-			attack.climb = 8 * 1.35 * (i * 2 + 1)
-
-			if boosted then
-				attack.stun = attack.stun * 1.5
-				attack.knockback = attack.knockback * 2
-				attack.knockup = attack.knockup * 3
-			end
-		end
-	end
+	
 end)
-
-
