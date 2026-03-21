@@ -1,7 +1,7 @@
 local SPRITE_PATH = path.combine(PATH, "sprites/")
 local SOUND_PATH = path.combine(PATH, "sound/")
 
-local sprite_select			= Sprite.new("RevenantSelect", path.combine(SPRITE_PATH, "select.png"), 34, 90, 0)
+local sprite_select			= Sprite.new("RevenantSelect", path.combine(SPRITE_PATH, "select.png"), 23, 90, 0)
 local sprite_portrait		= Sprite.new("RevenantPortrait", path.combine(SPRITE_PATH, "portrait.png"), 3)
 local sprite_portrait_small	= Sprite.new("RevenantPortraitSmall", path.combine(SPRITE_PATH, "portraitTiny.png"))
 local sprite_credits		= Sprite.new("CreditsSurvivorRevenant", path.combine(SPRITE_PATH, "credits.png"), 1, 7, 11)
