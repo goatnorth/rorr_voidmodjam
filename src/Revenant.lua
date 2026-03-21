@@ -37,7 +37,7 @@ local sprite_shoot2	= Sprite.new("RevenantShoot2", path.combine(SPRITE_PATH, "sh
 local sprite_shoot2b		= Sprite.new("NemCommandoShoot2B", path.combine(SPRITE_PATH, "shoot2b.png"), 10, 26, 39)
 local sprite_shoot3			= Sprite.new("RevenantShoot3", path.combine(SPRITE_PATH, "shoot3.png"), 4, 25, 25)
 local sprite_shoot4_1		= Sprite.new("RevenantShoot4_1", path.combine(SPRITE_PATH, "shoot4_1.png"), 10, 13, 30)
-local sprite_shoot4_2a		= Sprite.new("RevenantShoot4_2A", path.combine(SPRITE_PATH, "shoot4_2a.png"), 6, 7, 24)
+local sprite_shoot4_2a		= Sprite.new("RevenantShoot4_2A", path.combine(SPRITE_PATH, "cannon.png"), 6, 7, 24)
 local sprite_shoot4_2b		= Sprite.new("RevenantShoot4_2B", path.combine(SPRITE_PATH, "shoot4_2b.png"), 6, 9, 17)
 local sprite_shoot4b		= Sprite.new("RevenantShoot4B", path.combine(SPRITE_PATH, "shoot4b.png"), 9, 37, 33)
 local sprite_shoot4b_a		= Sprite.new("RevenantShoot4B_A", path.combine(SPRITE_PATH, "shoot4b_a.png"), 8, 24, 27)
@@ -463,7 +463,7 @@ end)
 
 Callback.add(state_special.on_step, function(actor, data)
 		actor:actor_animation_set(sprite_shoot4_2a, 0.2)
-		if actor.image_index >= 3 and data.fired == 0 then
+		if actor.image_index >= 7 and data.fired == 0 then
 			data.fired = 1
 			actor:sound_play(sound_specialfire, 1, 0.9 + math.random() * 0.2)
 			actor:screen_shake(3)
