@@ -1,7 +1,7 @@
 local SPRITE_PATH = path.combine(PATH, "sprites/")
 local SOUND_PATH = path.combine(PATH, "sound/")
 
-local sprite_select			= Sprite.new("RevenantSelect", path.combine(SPRITE_PATH, "select.png"), 23, 90, 0)
+local sprite_select			= Sprite.new("RevenantSelect", path.combine(SPRITE_PATH, "select.png"), 23, 28, 0)
 local sprite_portrait		= Sprite.new("RevenantPortrait", path.combine(SPRITE_PATH, "portrait.png"), 3)
 local sprite_portrait_small	= Sprite.new("RevenantPortraitSmall", path.combine(SPRITE_PATH, "portraitTiny.png"))
 local sprite_credits		= Sprite.new("CreditsSurvivorRevenant", path.combine(SPRITE_PATH, "credits.png"), 1, 7, 11)
@@ -47,7 +47,7 @@ local sprite_skills			= Sprite.new("RevenantSkills", path.combine(SPRITE_PATH, "
 local sprite_dust			= Sprite.new("RevenantDust", path.combine(SPRITE_PATH, "dust.png"), 3, 21, 12)
 
 local sprite_explosion		= Sprite.new("NemCommandoExplosion", path.combine(SPRITE_PATH, "grenade_explosion.png"), 5, 117, 102)
-local sprite_rocket			= Sprite.new("NemCommandoRocket", path.combine(SPRITE_PATH, "cannonorb.png"), 4, 33, 10)
+local sprite_rocket			= Sprite.new("NemCommandoRocket", path.combine(SPRITE_PATH, "cannonorb.png"), 4, 33, 10, 0.02)
 local sprite_rocket_mask	= Sprite.new("NemCommandoRocketMask", path.combine(SPRITE_PATH, "rocketMask.png"), 1, 0, 2)
 
 local sprite_portal 		= Sprite.new("NemCommandoPortal", path.combine(SPRITE_PATH, "portal.png"), 25, 78, 100)
@@ -471,6 +471,7 @@ end)
 Callback.add(objRocket.on_create, function(inst)
 	local data = Instance.get_data(inst)
 	inst.speed = ROCKET_SPEED_START
+	 inst.image_speed = 0.15
 
 	inst.team = 1
 	inst.parent = -4
