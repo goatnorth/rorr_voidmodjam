@@ -1,8 +1,13 @@
-The long description of your mod goes here.  
-This will appear on your Thunderstore mod page.  
+# THE REVENANT
+
+Made for the RoRR Mod Jam 1 - "Void", the **Revenant** is a new survivor emerging from the depths of the void to secure his newfound freedom.
+
+![](https://file.garden/ZqqnCXchxj2Oqhya/rev_select_markdown.gif)
+
+With martial technique and powerful corrupted weaponry, will he be able to escape the planet with your aid, or will oblivion find him once again?
 
 --------
-CREDITS:
+### CREDITS:
 Thank you Starstorm Returns Team for your help and code!
 Thank you to Digbug, anxvariable, and the starstorm team, if it weren't for you guys, we would have never been able to finish this
 
