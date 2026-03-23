@@ -1,7 +1,7 @@
 {
-    "name": "Revenant Mod.zip",
-    "description": "",
-    "version_number": "0.0.0",
+    "name": "Revenant",
+    "description": "An old warrior has found freedom, will you take him to the stars?",
+    "version_number": "1.0.0",
     "dependencies": [
 		"ReturnOfModding-ReturnOfModding-1.1.16",
 		"ReturnsAPI-ReturnsAPI-0.1.50"],
