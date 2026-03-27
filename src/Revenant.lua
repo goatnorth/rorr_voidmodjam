@@ -37,7 +37,7 @@ local sprite_shoot2	= Sprite.new("RevenantShoot2", path.combine(SPRITE_PATH, "sh
 local sprite_shoot2b		= Sprite.new("NemCommandoShoot2B", path.combine(SPRITE_PATH, "shoot2b.png"), 10, 26, 39)
 local sprite_shoot3			= Sprite.new("RevenantShoot3", path.combine(SPRITE_PATH, "shoot3.png"), 4, 25, 25)
 local sprite_shoot4_1		= Sprite.new("RevenantShoot4_1", path.combine(SPRITE_PATH, "shoot4_1.png"), 10, 13, 30)
-local sprite_shoot4_2a		= Sprite.new("RevenantShoot4_2A", path.combine(SPRITE_PATH, "cannon.png"), 11, 7, 24)
+local sprite_shoot4_2a		= Sprite.new("RevenantShoot4_2A", path.combine(SPRITE_PATH, "cannon.png"), 11, 10, 20)
 local sprite_shoot4_2b		= Sprite.new("RevenantShoot4_2B", path.combine(SPRITE_PATH, "shoot4_2b.png"), 6, 9, 17)
 local sprite_shoot4b		= Sprite.new("RevenantShoot4B", path.combine(SPRITE_PATH, "shoot4b.png"), 9, 37, 33)
 local sprite_shoot4b_a		= Sprite.new("RevenantShoot4B_A", path.combine(SPRITE_PATH, "shoot4b_a.png"), 8, 24, 27)
@@ -58,6 +58,8 @@ local sprite_portal_inside	= Sprite.new("NemCommandoPortalInside", path.combine(
 local sound_portal 			= Sound.new("NemCommandoPortal", path.combine(SOUND_PATH, "portal.ogg"))
 
 local sprite_log			= Sprite.new("NemCommandoLog", path.combine(SPRITE_PATH, "log.png"))
+
+local particleSpark = Particle.find("Spark")
 
 -- walk sprites have a sprite speed of 0.8, the slower animation looks better
 sprite_walk:set_speed(0.8)
@@ -242,13 +244,13 @@ end)
   Callback.add(state_primaryswing1.on_enter,function(actor,data) -- all of the states are pretty much the same in terms of how they work: they use util_fix_hspeed to make you stand still, set your animation, fire an explosion and set your combo value
 	actor.image_index = 0
     data.fired = 0
-	actor:sound_play(sound_slash, 1, 0.75 + math.random() * 0.05)
 		
 	end)
 Callback.add(state_primaryswing1.on_step, function(actor,data)
 	actor:skill_util_fix_hspeed()
 	actor:actor_animation_set(sprite_shoot1_1, 0.2)
-	if data.fired == 0 and actor.image_index >= 2.0 then
+	if data.fired == 0 and actor.image_index >= 1.0 then
+		actor:sound_play(sound_slash, 0.6, 0.75 + math.random() * 0.05)
 		local damage=actor:skill_get_damage(primary)
 		actor:skill_util_update_heaven_cracker(actor, damage)
 		if actor:is_authority() then
@@ -265,13 +267,14 @@ end)
   Callback.add(state_primaryswing2.on_enter,function(actor,data)
 actor.image_index = 0
     data.fired = 0
-	actor:sound_play(sound_slash, 1, 0.75 + math.random() * 0.05)
+
 		
 	end)
 Callback.add(state_primaryswing2.on_step, function(actor,data)
 	actor:skill_util_fix_hspeed()
 	actor:actor_animation_set(sprite_shoot1_2, 0.2)
-	if data.fired == 0 and actor.image_index >= 2.0 then
+	if data.fired == 0 and actor.image_index >= 1.0 then
+		actor:sound_play(sound_slash, 0.6, 0.75 + math.random() * 0.05)
 		local damage=actor:skill_get_damage(primary)
 		actor:skill_util_update_heaven_cracker(actor, damage)
 		if actor:is_authority() then
@@ -295,7 +298,7 @@ Callback.add(state_primaryswing3.on_step, function(actor,data)
 	actor:skill_util_fix_hspeed()
 	actor:actor_animation_set(sprite_shoot1_3, 0.2)
 	if data.fired == 0 and actor.image_index >= 4.0 then
-		actor:sound_play(sound_stomp, 1, 0.75 + math.random() * 0.05)	
+		actor:sound_play(sound_stomp, 0.8, 0.75 + math.random() * 0.05)	
 		local damage=actor:skill_get_damage(primary)
 		actor:skill_util_update_heaven_cracker(actor, damage)
 		if actor:is_authority() then
@@ -367,7 +370,7 @@ Callback.add(utility.on_activate, function(actor, skill, slot)
 end)
 
 Callback.add(state_utilitystart.on_enter, function(actor, data)
-	actor:sound_play(sound_jump, 1, 0.75 + math.random() * 0.05)
+	actor:sound_play(sound_jump, 0.8, 0.75 + math.random() * 0.05)
 	actor:actor_animation_set(sprite_jump, 0.2)
 	actor.image_index = 0
 	data.fired = 0
@@ -400,6 +403,7 @@ end)
 
 Callback.add(state_utility.on_step, function(actor, data)
 		actor:skill_util_strafe_and_slide()
+		actor.pGravity1 = 0
 		actor.pVspeed = 0
 	utility_duration = utility_duration - 1
 	utility_timer = utility_timer - 1 * actor.attack_speed
@@ -462,6 +466,7 @@ Callback.add(state_special.on_enter, function(actor, data)
 end)
 
 Callback.add(state_special.on_step, function(actor, data)
+		actor:skill_util_fix_hspeed()
 		actor:actor_animation_set(sprite_shoot4_2a, 0.2)
 		if actor.image_index >= 7 and data.fired == 0 then
 			data.fired = 1
@@ -525,7 +530,7 @@ Callback.add(objRocket.on_step, function(inst)
 			for i=0, inst.parent:buff_count(buff_shadow_clone) do
 			if Net.host then
 				
-				local attack = inst.parent:fire_direct(actor, inst.damage, inst.direction, inst.x, inst.y, gm.constants.sBite3).attack_info
+				local attack = inst.parent:fire_direct(actor, inst.damage, inst.direction, inst.x, inst.y, gm.constants.sEfExplosiveEnemy).attack_info
 			end
 			end
 			inst:sound_play(sound_orb, 0.5, 0.9)
@@ -568,5 +573,7 @@ Callback.add(objRocket.on_step, function(inst)
 end)
 
 Callback.add(objRocket.on_destroy, function(inst)
-	
+		inst:sound_play(sound_specialfire, 1, 0.6 + math.random() * 0.1)
+		inst:sound_play(gm.constants.wTurtleExplosion, 1, 0.8 + math.random() * 0.1)
+		particleSpark:create(inst.x, inst.y, 6)
 end)
